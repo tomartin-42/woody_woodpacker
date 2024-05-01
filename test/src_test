@@ -1,0 +1,2 @@
+SRC_TEST = test_check_file.c \
+            unity.c
