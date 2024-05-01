@@ -5,7 +5,7 @@ INC = -I../includes/ -I../Unity/src/
 SRC_DIR = ../src/
 OBJ_DIR = ./obj/
 SRC_UNITY = ../Unity/src/unity.c
-
+GENERATE_RUNNER = ../Unity/auto/generate_test_runner.rb
 
 #SRC_FILES
 include ../src_list
@@ -18,6 +18,8 @@ OBJ += $(addprefix $(OBJ_DIR), $(SRC_TEST:.c=.o))
 
 obj:
 	mkdir -p $(OBJ_DIR)
+
+generate_runner:
 
 print:
 	@echo $(SRC)
