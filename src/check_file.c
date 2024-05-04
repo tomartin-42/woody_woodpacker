@@ -7,7 +7,7 @@ int check_the_origin_file(char *file) {
   fd = open(file, O_RDONLY);
   if (fd == -1) {
     perror("Can not open the source file");
-    return (1);
+    return (fd);
   }
-  return (0);
+  return (fd);
 }

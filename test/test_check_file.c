@@ -13,6 +13,6 @@ void tearDown(void) {
 int check_the_origin_file(char *file);
 
 void test_check_the_origin_file(void) {
-  TEST_ASSERT_EQUAL_INT(0, check_the_origin_file("hola"));
-  TEST_ASSERT_EQUAL_INT(1, check_the_origin_file("xxxxx"));
+  TEST_ASSERT(check_the_origin_file("./files/normal") > 0);
+  TEST_ASSERT(check_the_origin_file("./files/without_permissions") < 0);
 }

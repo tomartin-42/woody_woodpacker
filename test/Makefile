@@ -15,10 +15,7 @@ SRC += $(SRC_UNITY)
 SRC += runner.c
 OBJ = $(patsubst %.c,$(OBJ_DIR)%.o,$(notdir $(SRC)))
 
-all: obj generate_runner $(NAME)
-
-obj:
-	mkdir -p $(OBJ_DIR)
+all: fclean generate_runner $(NAME)
 
 $(NAME): $(SRC)
 	$(CC) $(CFLAGS) $(INC) $(SRC) -o $@ 
