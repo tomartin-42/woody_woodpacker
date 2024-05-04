@@ -13,5 +13,5 @@ int main(int argc, char **argv) {
   if (fd < 0) {
     exit(1);
   }
-  printf("%d", check_elf64_origin_file(fd));
+  check_elf64_origin_file(fd);
 }

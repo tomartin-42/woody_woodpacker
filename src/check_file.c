@@ -40,5 +40,10 @@ int check_elf64_origin_file(int fd) {
   Elf64_Ehdr header = {0};
   ssize_t i;
   i = read(fd, &header, sizeof(header));
+  //"7f 45 4c 46" -> ELF
+  printf("%c", header.e_ident[0]);
+  printf("%c", header.e_ident[1]);
+  printf("%c", header.e_ident[2]);
+  printf("%c", header.e_ident[3]);
   return (i);
 }
