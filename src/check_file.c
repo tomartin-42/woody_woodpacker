@@ -38,12 +38,15 @@ int check_the_origin_file(char *file) {
 
 int check_elf64_origin_file(int fd) {
   Elf64_Ehdr header = {0};
+  char elf[4] = {0x7f, 0x45, 0x4c, 0x46}; //"7f 45 4c 46" -> ELF
   ssize_t i;
+
   i = read(fd, &header, sizeof(header));
-  //"7f 45 4c 46" -> ELF
-  printf("%c", header.e_ident[0]);
-  printf("%c", header.e_ident[1]);
-  printf("%c", header.e_ident[2]);
-  printf("%c", header.e_ident[3]);
+
+  if (i != 64) {
+    return (-1);
+  }
+
+  printf("memcmp %d", ft_memcmp(header.e_ident, elf, 4));
   return (i);
 }
