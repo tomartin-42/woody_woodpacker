@@ -36,6 +36,10 @@ int check_the_origin_file(char *file) {
    tabla de cadenas del encabezado de sección
 */
 
+// This functon comprobate the header of imput file
+// return -1 if error
+// return 1 if ELF64
+// return 2 if ELF32
 int check_elf64_origin_file(int fd) {
   Elf64_Ehdr header = {0};
   char elf[4] = {0x7f, 0x45, 0x4c, 0x46}; //"7f 45 4c 46" -> ELF
@@ -49,8 +53,15 @@ int check_elf64_origin_file(int fd) {
   }
 
   type = ft_memcmp(header.e_ident, elf, 4);
-  if (type != 0) {
+  if (type != 0) { // The file itś not a ELF file
     return (-1);
   }
-  return (i);
+
+  if (header.e_ident[EI_CLASS] == ELFCLASS64) { // Te file is ELF64
+    return (1);
+  }
+  if (header.e_ident[EI_CLASS] == ELFCLASS32) { // The file in ELF32
+    return (2);
+  }
+  return (-1);
 }
