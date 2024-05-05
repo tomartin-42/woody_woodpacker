@@ -40,13 +40,17 @@ int check_elf64_origin_file(int fd) {
   Elf64_Ehdr header = {0};
   char elf[4] = {0x7f, 0x45, 0x4c, 0x46}; //"7f 45 4c 46" -> ELF
   ssize_t i;
+  int type;
 
   i = read(fd, &header, sizeof(header));
 
-  if (i != 64) {
+  if (i != 64) { // The file don't have correct header
     return (-1);
   }
 
-  printf("memcmp %d", ft_memcmp(header.e_ident, elf, 4));
+  type = ft_memcmp(header.e_ident, elf, 4);
+  if (type != 0) {
+    return (-1);
+  }
   return (i);
 }

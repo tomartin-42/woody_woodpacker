@@ -18,4 +18,6 @@ void test_check_the_origin_file(void) {
 
   TEST_ASSERT(
       check_elf64_origin_file(check_the_origin_file("./files/normal")) == 64);
+  TEST_ASSERT(check_elf64_origin_file(
+                  check_the_origin_file("./files/incorrect_header")) == -1);
 }
