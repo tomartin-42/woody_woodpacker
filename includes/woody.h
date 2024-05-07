@@ -5,5 +5,6 @@
 
 int check_the_origin_file(char *file);
 int check_elf64_origin_file(int fd);
+int main_check_input_file(char *file);
 
 #endif

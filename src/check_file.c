@@ -54,9 +54,9 @@ int check_elf64_origin_file(int fd) {
 
   type = ft_memcmp(header.e_ident, elf, 4);
   if (type != 0) { // The file itś not a ELF file
+    perror("The file in not a elf type\n");
     return (-1);
   }
-
   if (header.e_ident[EI_CLASS] == ELFCLASS64) { // Te file is ELF64
     return (1);
   }
@@ -64,4 +64,20 @@ int check_elf64_origin_file(int fd) {
     return (2);
   }
   return (-1);
+}
+
+int main_check_input_file(char *file) {
+  int fd = check_the_origin_file(file);
+  int elftype;
+
+  if (fd < 0) {
+    return (-1);
+  }
+  elftype = check_elf64_origin_file(fd);
+  if (elftype == -1) {
+    close(fd);
+    return (-1);
+  }
+  close(fd);
+  return (elftype);
 }
