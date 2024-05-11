@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
   if (check < 0) {
     exit(1);
   } else {
-    // reopen input file and read
+    get_elf64_header(argv[1]);
+    //  reopen input file and read
   }
 }
