@@ -16,8 +16,7 @@ int main(int argc, char **argv) {
     exit(1);
   } else {
     header = get_elf64_header(argv[1]);
-    printf("Entry Point -> 0x%lx\n", header->e_entry);
-    printf("woody Entry Point -> %p\n", (void *)main);
+    printf("Target Entry Point -> 0x%lx\n", header->e_entry);
     //  reopen input file and read
   }
 }

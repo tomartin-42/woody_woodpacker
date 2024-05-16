@@ -5,6 +5,7 @@
 
 Elf64_Ehdr *get_elf64_header(char *file) {
   Elf64_Ehdr *header = (Elf64_Ehdr *)malloc(sizeof(Elf64_Ehdr));
+
   if (header == NULL) {
     return (header);
   }
