@@ -48,13 +48,13 @@ int main(int argc, char **argv) {
   }
 
   header = get_elf64_header(fd);
-  p_headers = get_target_program_headers(header, fd);
-  printf("%p\n", p_headers);
+  print_header(header);
   if (!header) {
     perror("Can not read target file\n");
     exit(1);
   }
-  p_headers = get_target_program_headers(header, *(argv[1]));
+  p_headers = get_target_program_headers(header, fd);
+  (void)p_headers;
   printf("[?] Main Entry Point -> %p\n", &main);
   printf("[?] instructions address %p\n", instructions);
   run_instructions();
