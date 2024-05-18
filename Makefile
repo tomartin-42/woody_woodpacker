@@ -49,4 +49,6 @@ fclean: clean
 test: all
 	@make -C $(TEST_DIR)
 
+help:
+	@echo "Launch test: -> make test TEST=../src/<module.c>"
 re: fclean all

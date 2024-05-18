@@ -15,6 +15,7 @@ int check_the_origin_file(char *file) {
 }
 
 /*
+typedef struct {
     unsigned char e_ident[EI_NIDENT]; Identificación de archivo ELF
     Elf64_Half    e_type;             Tipo de archivo
     Elf64_Half    e_machine;          Arquitectura del procesador
@@ -34,6 +35,7 @@ int check_the_origin_file(char *file) {
    del encabezado de sección
    Elf64_Half    e_shstrndx;         Índice de la
    tabla de cadenas del encabezado de sección
+} Elf64_Ehdr;
 */
 
 // This functon comprobate the header of imput file

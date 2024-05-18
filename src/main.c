@@ -1,6 +1,7 @@
 #include "../includes/woody.h"
 #include <elf.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -27,7 +28,9 @@ void run_instructions() {
 
 int main(int argc, char **argv) {
   int check;
+  int fd;
   Elf64_Ehdr *header = NULL;
+  Elf64_Phdr *p_headers = NULL;
 
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
@@ -36,16 +39,25 @@ int main(int argc, char **argv) {
   check = main_check_input_file(argv[1]);
   if (check < 0) {
     exit(1);
-  } else {
-    header = get_elf64_header(argv[1]);
-    if (!header) {
-      perror("Can not read target file\n");
-      exit(1);
-    }
-    printf("[?] Main Entry Point -> %p\n", &main);
-    printf("[?] instructions address %p\n", instructions);
-    run_instructions();
-
-    //  reopen input file and read
   }
+
+  fd = open(argv[1], O_RDONLY);
+  if (fd == -1) {
+    perror("Can not open target file\n");
+    exit(1);
+  }
+
+  header = get_elf64_header(fd);
+  p_headers = get_target_program_headers(header, fd);
+  printf("%p\n", p_headers);
+  if (!header) {
+    perror("Can not read target file\n");
+    exit(1);
+  }
+  p_headers = get_target_program_headers(header, *(argv[1]));
+  printf("[?] Main Entry Point -> %p\n", &main);
+  printf("[?] instructions address %p\n", instructions);
+  run_instructions();
+
+  //  reopen input file and read
 }
