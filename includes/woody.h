@@ -14,4 +14,5 @@ Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
 
 // print.c
 void print_header(Elf64_Ehdr *header);
+void print_p_headers(Elf64_Phdr *p_header, int range);
 #endif

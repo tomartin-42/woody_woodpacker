@@ -49,4 +49,21 @@ void print_header(Elf64_Ehdr *header) {
 
   // Imprimir e_shstrndx
   printf("e_shstrndx: %u\n", header->e_shstrndx);
+  printf("==============================\n");
+}
+
+void print_p_headers(Elf64_Phdr *p_headers, int range) {
+  for (int i = 0; i < range; i++) {
+    printf("Segmento %d:\n", i);
+    printf("  Tipo: %u\n", p_headers[i].p_type);
+    printf("  Offset: %lu\n", p_headers[i].p_offset);
+    printf("  Dirección Virtual: %lx\n", p_headers[i].p_vaddr);
+    printf("  Dirección Física: %lx\n", p_headers[i].p_paddr);
+    printf("  Tamaño en Archivo: %lu\n", p_headers[i].p_filesz);
+    printf("  Tamaño en Memoria: %lu\n", p_headers[i].p_memsz);
+    printf("  Permisos: %u\n", p_headers[i].p_flags);
+    printf("  Alineación: %lu\n", p_headers[i].p_align);
+    printf("------------------------------\n");
+  }
+  printf("==============================\n");
 }

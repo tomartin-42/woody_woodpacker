@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
   p_headers = get_target_program_headers(header, fd);
-  (void)p_headers;
+  print_p_headers(p_headers, header->e_phnum);
   printf("[?] Main Entry Point -> %p\n", &main);
   printf("[?] instructions address %p\n", instructions);
   run_instructions();

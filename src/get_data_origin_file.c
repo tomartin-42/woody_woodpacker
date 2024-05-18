@@ -42,7 +42,7 @@ Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd) {
   Elf64_Phdr *p_headers =
       (Elf64_Phdr *)malloc(sizeof(Elf64_Phdr) * header->e_phnum);
 
-  if (lseek(fd, header->e_shoff, SEEK_SET) == -1) {
+  if (lseek(fd, header->e_phoff, SEEK_SET) == -1) {
     perror("Error seeking origin file");
     free(p_headers);
     free(header);
