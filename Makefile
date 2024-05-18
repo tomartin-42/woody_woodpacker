@@ -27,7 +27,7 @@ obj:
 	@mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(INC) -I$(LIBFT_DIR) -o $@ -c $<
+	$(CC) $(CFLAGS) -g $(INC) -I$(LIBFT_DIR) -o $@ -c $<
 
 $(NAME): $(OBJ)
 	$(CC) $(OBJ) $(CFLAGS) $(LNK) -o $@ 
