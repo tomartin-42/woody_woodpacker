@@ -28,6 +28,8 @@ void run_instructions() {
 }
 
 void mapping_p_headers(int fd, Elf64_Ehdr *header, Elf64_Phdr *p_headers) {
+  void *p[3];
+  int j = 0;
   for (int i = 0; i < header->e_phnum; i++) {
     if (p_headers[i].p_type == PT_LOAD) {
       int prot = 0;
@@ -40,6 +42,8 @@ void mapping_p_headers(int fd, Elf64_Ehdr *header, Elf64_Phdr *p_headers) {
         prot |= PROT_EXEC;
       void *p_map = mmap((void *)p_headers[i].p_vaddr, p_headers[i].p_paddr,
                          prot, MAP_PRIVATE, fd, p_headers[i].p_offset);
+      p[j] = p_map;
+      j++;
       printf("mapeando %p\n", p_map);
       lseek(fd, p_headers[i].p_offset, SEEK_SET);
       read(fd, p_map, p_headers[i].p_memsz);
@@ -48,6 +52,8 @@ void mapping_p_headers(int fd, Elf64_Ehdr *header, Elf64_Phdr *p_headers) {
       printf("cambiando permisos\n");
     }
   }
+  void (*f)(void) = p[1];
+  f();
   close(fd);
 }
 
@@ -80,9 +86,7 @@ int main(int argc, char **argv) {
   }
   p_headers = get_target_program_headers(header, fd);
   mapping_p_headers(fd, header, p_headers);
-  void (*f)(void) = (void *)header->e_entry;
-  f();
-  //   declaramos un puntero a funcion
+  //    declaramos un puntero a funcion
   print_p_headers(p_headers, header->e_phnum);
 
   //  reopen input file and read
