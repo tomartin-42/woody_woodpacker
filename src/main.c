@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 const char *instructions =
     "\xBF\x01\x00\x00\x00\x48\xBE\x00\x20\x40\x00\x00\x00\x00\x00\xBA\x0D\x00"
@@ -24,6 +25,30 @@ void run_instructions() {
   printf("[!] Iniciamos instructions\n");
   f();
   printf("finalizamos instructions\n");
+}
+
+void mapping_p_headers(int fd, Elf64_Ehdr *header, Elf64_Phdr *p_headers) {
+  for (int i = 0; i < header->e_phnum; i++) {
+    if (p_headers[i].p_type == PT_LOAD) {
+      int prot = 0;
+
+      if (p_headers[i].p_flags & PF_R)
+        prot |= PROT_READ;
+      if (p_headers[i].p_flags & PF_W)
+        prot |= PROT_WRITE;
+      if (p_headers[i].p_flags & PF_X)
+        prot |= PROT_EXEC;
+      void *p_map = mmap((void *)p_headers[i].p_vaddr, p_headers[i].p_paddr,
+                         prot, MAP_PRIVATE, fd, p_headers[i].p_offset);
+      printf("mapeando %p\n", p_map);
+      lseek(fd, p_headers[i].p_offset, SEEK_SET);
+      read(fd, p_map, p_headers[i].p_memsz);
+      printf("copiando\n");
+      mprotect((void *)p_map, 0x1000, prot);
+      printf("cambiando permisos\n");
+    }
+  }
+  close(fd);
 }
 
 int main(int argc, char **argv) {
@@ -54,10 +79,11 @@ int main(int argc, char **argv) {
     exit(1);
   }
   p_headers = get_target_program_headers(header, fd);
+  mapping_p_headers(fd, header, p_headers);
+  void (*f)(void) = (void *)header->e_entry;
+  f();
+  //   declaramos un puntero a funcion
   print_p_headers(p_headers, header->e_phnum);
-  printf("[?] Main Entry Point -> %p\n", &main);
-  printf("[?] instructions address %p\n", instructions);
-  run_instructions();
 
   //  reopen input file and read
 }

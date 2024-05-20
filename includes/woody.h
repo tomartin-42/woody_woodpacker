@@ -11,6 +11,7 @@ int main_check_input_file(char *file);
 // get_data_origin_file
 Elf64_Ehdr *get_elf64_header(int fd);
 Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
+void *map_file(int fd);
 
 // print.c
 void print_header(Elf64_Ehdr *header);

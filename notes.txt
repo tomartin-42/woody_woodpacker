@@ -1,0 +1,23 @@
+Leer el archivo ELF original en memoria: Usamos mmap para leer el contenido del archivo ELF en memoria.
+Leer el binario a inyectar: Usamos mmap nuevamente para leer el contenido del binario a inyectar.
+Encontrar un segmento LOAD en el ELF original: Recorremos los encabezados de los programas (segmentos) para encontrar uno que sea de tipo PT_LOAD.
+Crear un nuevo ELF con espacio para el código añadido: Creamos una nueva área de memoria que contendrá el ELF original más el código a inyectar.
+Escribir el código inyectado en el nuevo ELF: Copiamos el contenido del binario a inyectar en el nuevo ELF, en una posición adecuada.
+Ajustar el segmento LOAD: Actualizamos los tamaños de archivo (p_filesz) y memoria (p_memsz) del segmento LOAD para reflejar la adición del nuevo código.
+Actualizar la entrada de inicio (e_entry): Ajustamos la dirección de entrada del ELF para que apunte a la nueva rutina inyectada.
+Escribir el ELF modificado en el archivo de salida: Guardamos el nuevo ELF modificado en un archivo de salida.
+
+----------------------------------------------------------------------------------------------------
+
+
+Leer el archivo ELF original en memoria: Usamos mmap para leer el contenido del archivo ELF en memoria.
+Leer el binario a inyectar: Usamos mmap nuevamente para leer el contenido del binario a inyectar.
+Encontrar un segmento LOAD en el ELF original: Recorremos los encabezados de los programas (segmentos) para encontrar uno que sea de tipo PT_LOAD.
+Crear un nuevo ELF con espacio para el código añadido: Creamos una nueva área de memoria que contendrá el ELF original más el código a inyectar.
+Escribir el código inyectado en el nuevo ELF: Copiamos el contenido del binario a inyectar en el nuevo ELF, en una posición adecuada.
+Ajustar el segmento LOAD: Actualizamos los tamaños de archivo (p_filesz) y memoria (p_memsz) del segmento LOAD para reflejar la adición del nuevo código.
+Actualizar la entrada de inicio (e_entry): Ajustamos la dirección de entrada del ELF para que apunte a la nueva rutina inyectada.
+Escribir el ELF modificado en el archivo de salida: Guardamos el nuevo ELF modificado en un archivo de salida.
+Este código debería funcionar para inyectar tu binario compilado en un archivo ELF, asumiendo que el binario a inyectar es lo suficientemente pequeño como para caber en la memoria adicional que has asignado. Ajusta el tamaño adicional y las ubicaciones de memoria según sea necesario para tus archivos específicos.
+
+
