@@ -3,17 +3,45 @@
 
 #include "../libft42/libft.h"
 #include <elf.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <unistd.h>
 
-int check_the_origin_file(char *file);
-int check_elf64_origin_file(int fd);
-int main_check_input_file(char *file);
+#define PAYLOAD                                                                \
+  "\xBF\x01\x00\x00\x00\x48\xBE\x00\x20\x40\x00\x00\x00\x00\x00\xBA\x0D\x00"   \
+  "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
+  "\x05";
+
+// ERROS
+#define NOT_ELF_ERROR "Not ELF file"
+
+typedef struct s_woody {
+  Elf64_Ehdr *header;
+  Elf64_Phdr *p_header;
+  Elf64_Shdr *s_header;
+  void *file;
+  size_t file_size;
+} t_woody;
+
+// int check_the_origin_file(char *file);
+int check_origin_elf(uint8_t *origin_file, size_t origin_len);
+// int main_check_input_file(char *file);
 
 // get_data_origin_file
-Elf64_Ehdr *get_elf64_header(int fd);
-Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
-void *map_file(int fd);
+// Elf64_Ehdr *get_elf64_header(int fd);
+// Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
+// void *map_file(int fd);
 
 // print.c
-void print_header(Elf64_Ehdr *header);
-void print_p_headers(Elf64_Phdr *p_header, int range);
+// void print_header(Elf64_Ehdr *header);
+// void print_p_headers(Elf64_Phdr *p_header, int range);
+// void print_info_p_headers(Elf64_Phdr *p_headers, int range);
+
+// error.c
+void launch_error(char *msg, void *file, size_t file_len);
 #endif

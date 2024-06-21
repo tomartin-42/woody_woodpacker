@@ -2,6 +2,7 @@ NAME = woody_woodpacker
 
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
+FSANITIZER = -g -fsanitize=address 
 
 LIBFT_DIR = ./libft42/
 LNK = -L $(LIBFT_DIR) -lft
@@ -30,7 +31,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -g $(INC) -I$(LIBFT_DIR) -o $@ -c $<
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) $(CFLAGS) $(LNK) -o $@ 
+	$(CC) $(OBJ) $(CFLAGS) $(LNK) -o $@ $(FSANITIZER)
 
 print:
 	echo $(SRC)

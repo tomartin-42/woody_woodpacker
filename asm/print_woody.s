@@ -13,7 +13,8 @@ _start:
     mov   rax, 1    ; syscall write
     syscall
 
-    xor   rdi, rdi  ; return 0
-    mov   rax, 60   ; syscall exit
-    syscall
-
+    
+;    xor   rdi, rdi  ; return 0
+;    mov   rax, 60   ; syscall exit
+;    syscall
+    ret

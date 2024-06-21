@@ -49,7 +49,7 @@ void print_header(Elf64_Ehdr *header) {
 
   // Imprimir e_shstrndx
   printf("e_shstrndx: %u\n", header->e_shstrndx);
-  printf("==============================\n");
+  printf("==============================\n\n");
 }
 
 void print_p_headers(Elf64_Phdr *p_headers, int range) {
@@ -65,5 +65,14 @@ void print_p_headers(Elf64_Phdr *p_headers, int range) {
     printf("  Alineación: %lu\n", p_headers[i].p_align);
     printf("------------------------------\n");
   }
-  printf("==============================\n");
+  printf("==============================\n\n");
+}
+
+void print_info_p_headers(Elf64_Phdr *p_headers, int range) {
+  for (int i = 0; i < range; i++) {
+    printf("file %08lx..%08lx | mem %08lx..%08lx | alig %08lx | %i | %x\n",
+           p_headers[i].p_offset, p_headers[i].p_filesz, p_headers[i].p_vaddr,
+           p_headers[i].p_memsz, p_headers[i].p_align, p_headers[i].p_flags,
+           p_headers[i].p_type);
+  }
 }
