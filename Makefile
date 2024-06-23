@@ -34,8 +34,9 @@ $(NAME): $(OBJ)
 	$(CC) $(OBJ) $(CFLAGS) $(LNK) -o $@ $(FSANITIZER)
 
 print:
-	echo $(SRC)
-	echo $(OBJ)
+	@echo $(SRC)
+	@echo ""
+	@echo $(OBJ)
 
 clean:
 	@rm -Rf $(OBJ_DIR)

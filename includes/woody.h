@@ -23,7 +23,6 @@
 typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
-  Elf64_Shdr *s_header;
   void *file;
   size_t file_size;
 } t_woody;
@@ -32,6 +31,9 @@ typedef struct s_woody {
 int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 // int main_check_input_file(char *file);
 
+void get_elf64_data(t_woody *woody, void *origin_file);
+void get_elf64_header(t_woody *woody, void *origin_file);
+void get_elf64_pheader(t_woody *woody, void *origin_file);
 // get_data_origin_file
 // Elf64_Ehdr *get_elf64_header(int fd);
 // Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
@@ -44,4 +46,9 @@ int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
+
+// prints.c
+void print_elf_header(Elf64_Ehdr *header);
+void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
+
 #endif

@@ -1,78 +1,59 @@
 // In this file going the print functions
 #include "../includes/woody.h"
-#include <elf.h>
-#include <stdio.h>
 
-void print_header(Elf64_Ehdr *header) {
-  // Imprimir e_ident
-  printf("e_ident: ");
+void print_elf_header(Elf64_Ehdr *header) {
+  printf("ELF Header:\n");
+
+  // e_ident
+  printf("  Magic:   ");
   for (int i = 0; i < EI_NIDENT; i++) {
     printf("%02x ", header->e_ident[i]);
   }
   printf("\n");
-
-  // Imprimir e_type
-  printf("e_type: %u\n", header->e_type);
-
-  // Imprimir e_machine
-  printf("e_machine: %u\n", header->e_machine);
-
-  // Imprimir e_version
-  printf("e_version: %u\n", header->e_version);
-
-  // Imprimir e_entry
-  printf("e_entry: %lx\n", header->e_entry);
-
-  // Imprimir e_phoff
-  printf("e_phoff: %lx\n", header->e_phoff);
-
-  // Imprimir e_shoff
-  printf("e_shoff: %lx\n", header->e_shoff);
-
-  // Imprimir e_flags
-  printf("e_flags: %u\n", header->e_flags);
-
-  // Imprimir e_ehsize
-  printf("e_ehsize: %u\n", header->e_ehsize);
-
-  // Imprimir e_phentsize
-  printf("e_phentsize: %u\n", header->e_phentsize);
-
-  // Imprimir e_phnum
-  printf("e_phnum: %u\n", header->e_phnum);
-
-  // Imprimir e_shentsize
-  printf("e_shentsize: %u\n", header->e_shentsize);
-
-  // Imprimir e_shnum
-  printf("e_shnum: %u\n", header->e_shnum);
-
-  // Imprimir e_shstrndx
-  printf("e_shstrndx: %u\n", header->e_shstrndx);
-  printf("==============================\n\n");
+  // e_type
+  printf("  Type:                             %u\n", header->e_type);
+  // e_machine
+  printf("  Machine:                          %u\n", header->e_machine);
+  // e_version
+  printf("  Version:                          %u\n", header->e_version);
+  // e_entry
+  printf("  Entry point address:              0x%lx\n", header->e_entry);
+  // e_phoff
+  printf("  Start of program headers:         %lu (bytes into file)\n",
+         header->e_phoff);
+  // e_shoff
+  printf("  Start of section headers:         %lu (bytes into file)\n",
+         header->e_shoff);
+  // e_flags
+  printf("  Flags:                            %u\n", header->e_flags);
+  // e_ehsize
+  printf("  Size of this header:              %u (bytes)\n", header->e_ehsize);
+  // e_phentsize
+  printf("  Size of program headers:          %u (bytes)\n",
+         header->e_phentsize);
+  // e_phnum
+  printf("  Number of program headers:        %u\n", header->e_phnum);
+  // e_shentsize
+  printf("  Size of section headers:          %u (bytes)\n",
+         header->e_shentsize);
+  // e_shnum
+  printf("  Number of section headers:        %u\n", header->e_shnum);
+  // e_shstrndx
+  printf("  Section header string table index:%u\n", header->e_shstrndx);
 }
 
-void print_p_headers(Elf64_Phdr *p_headers, int range) {
-  for (int i = 0; i < range; i++) {
-    printf("Segmento %d:\n", i);
-    printf("  Tipo: %u\n", p_headers[i].p_type);
-    printf("  Offset: %lu\n", p_headers[i].p_offset);
-    printf("  Dirección Virtual: %lx\n", p_headers[i].p_vaddr);
-    printf("  Dirección Física: %lx\n", p_headers[i].p_paddr);
-    printf("  Tamaño en Archivo: %lu\n", p_headers[i].p_filesz);
-    printf("  Tamaño en Memoria: %lu\n", p_headers[i].p_memsz);
-    printf("  Permisos: %u\n", p_headers[i].p_flags);
-    printf("  Alineación: %lu\n", p_headers[i].p_align);
-    printf("------------------------------\n");
-  }
-  printf("==============================\n\n");
-}
+void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum) {
+  printf("Program Headers:\n");
 
-void print_info_p_headers(Elf64_Phdr *p_headers, int range) {
-  for (int i = 0; i < range; i++) {
-    printf("file %08lx..%08lx | mem %08lx..%08lx | alig %08lx | %i | %x\n",
-           p_headers[i].p_offset, p_headers[i].p_filesz, p_headers[i].p_vaddr,
-           p_headers[i].p_memsz, p_headers[i].p_align, p_headers[i].p_flags,
-           p_headers[i].p_type);
+  for (int i = 0; i < phnum; i++) {
+    printf("  Program Header %d:\n", i);
+    printf("    Type:           %u\n", p_header[i].p_type);
+    printf("    Flags:          0x%x\n", p_header[i].p_flags);
+    printf("    Offset:         0x%lx\n", p_header[i].p_offset);
+    printf("    Virtual Addr:   0x%lx\n", p_header[i].p_vaddr);
+    printf("    Physical Addr:  0x%lx\n", p_header[i].p_paddr);
+    printf("    File Size:      %lu bytes\n", p_header[i].p_filesz);
+    printf("    Mem Size:       %lu bytes\n", p_header[i].p_memsz);
+    printf("    Alignment:      %lu\n", p_header[i].p_align);
   }
 }
