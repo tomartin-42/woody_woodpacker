@@ -1,5 +1,4 @@
 #include "../includes/woody.h"
-#include <elf.h>
 
 void get_elf64_data(t_woody *woody, void *origin_file) {
   get_elf64_header(woody, origin_file);

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #define PAYLOAD                                                                \
@@ -23,6 +24,7 @@
 typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
+  Elf64_Phdr *my_Pheader;
   void *file;
   size_t file_size;
 } t_woody;
@@ -51,4 +53,11 @@ void launch_error(char *msg, void *file, size_t file_len);
 void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 
+// get_data.c
+void init_my_Pheade(t_woody *woody, void *origin_file);
+Elf64_Addr get_max_add(t_woody *woody);
+
+void main_put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
+void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
+void mod_origin_header(t_woody *woody, void *origin_file, ssize_t origin_len);
 #endif

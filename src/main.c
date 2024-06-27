@@ -100,6 +100,7 @@ int main(int argc, char **argv) {
   check = check_origin_elf(origin_file, origin_len);
   if (check == ELFCLASS64) {
     get_elf64_data(&woody, origin_file);
+    main_put_file(&woody, origin_file, origin_len);
     // elf64_worker
     printf("64 WORKER\n");
   } else {
