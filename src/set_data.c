@@ -13,25 +13,26 @@ void main_put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
 }
 
 Elf64_Addr get_max_add(t_woody *woody) {
-  Elf64_Off max_add = 0;
+    Elf64_Addr highest_vaddr = 0;
 
-  for (int i = 0; i < woody->header->e_phnum; i++) {
-    if (woody->p_header[i].p_vaddr > max_add) {
-      max_add = woody->p_header[i].p_vaddr;
+    for (int i = 0; i < woody->header->e_phnum; i++) {
+        if (woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz > highest_vaddr) {
+            highest_vaddr = woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz;
+        }
     }
-  }
-  return (max_add);
+  return (highest_vaddr);
 }
 
 void init_my_Pheade(t_woody *woody, void *origin_file) {
   (void)origin_file;
   Elf64_Off Offset = get_max_add(woody);
   Offset++;
+  Elf64_Addr highest_vaddr = get_max_add(woody);
   woody->my_Pheader = (Elf64_Phdr *)malloc(sizeof(Elf64_Phdr));
   woody->my_Pheader->p_type = PT_LOAD;
-  woody->my_Pheader->p_offset = Offset;
-  woody->my_Pheader->p_vaddr = Offset;
-  woody->my_Pheader->p_paddr = Offset;
+  woody->my_Pheader->p_offset = (highest_vaddr + 0xfff) & ~0xfff;
+  woody->my_Pheader->p_vaddr = (highest_vaddr + 0xfff) & ~0xfff;
+  woody->my_Pheader->p_paddr = (highest_vaddr + 0xfff) & ~0xfff;
   woody->my_Pheader->p_filesz = 0x60;
   woody->my_Pheader->p_memsz = 0x60;
   woody->my_Pheader->p_flags = PF_X | PF_W | PF_R;
@@ -41,16 +42,12 @@ void init_my_Pheade(t_woody *woody, void *origin_file) {
 void mod_origin_header(t_woody *woody, void *origin_file, ssize_t origin_len) {
   // TODO
   (void)woody;
-  (void)origin_file;
-  (void)origin_len;
-  // Elf64_Ehdr *tmp_header;
-  //
-  // tmp_header = (Elf64_Ehdr *)origin_file;
-  // tmp_header->e_phnum++;
-  // printf("POFF Before: %ld\n", tmp_header->e_phoff);
-  // printf("origin_len: %ld\n", origin_len);
-  // tmp_header->e_phoff = origin_len;
-  // printf("POFF After: %ld\n", tmp_header->e_phoff);
+  Elf64_Ehdr *tmp_header = (Elf64_Ehdr *)origin_file;
+  tmp_header->e_phnum++;
+  printf("POFF Before: %ld\n", tmp_header->e_phoff);
+  printf("origin_len: %ld\n", origin_len);
+  tmp_header->e_phoff = origin_len;
+  printf("POFF After: %ld\n", tmp_header->e_phoff);
 }
 
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
@@ -63,7 +60,7 @@ void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
   tmp = write(fd, woody->p_header,
               (sizeof(Elf64_Phdr) * (woody->header->e_phnum)));
   printf("[ 2] Write: %d\n", tmp);
-  // tmp = write(fd, woody->my_Pheader, sizeof(Elf64_Phdr));
+  tmp = write(fd, woody->my_Pheader, sizeof(Elf64_Phdr));
   printf("[ 3] Write: %d\n", tmp);
   close(fd);
 }

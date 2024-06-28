@@ -14,7 +14,6 @@ void get_elf64_header(t_woody *woody, void *origin_file) {
 
 void get_elf64_pheader(t_woody *woody, void *origin_file) {
   // Copy Program_Headers
-  ft_bzero(woody->p_header, sizeof(Elf64_Phdr) * (woody->header->e_phnum + 1));
   woody->p_header = (Elf64_Phdr *)malloc(
       (sizeof(Elf64_Phdr) *
        (woody->header->e_phnum + 1))); // +1 to add my Program_Header
