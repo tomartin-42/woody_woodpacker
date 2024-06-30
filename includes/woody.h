@@ -25,6 +25,7 @@ typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
   Elf64_Phdr *my_Pheader;
+  int tmp;
   void *file;
   size_t file_size;
 

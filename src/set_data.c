@@ -43,12 +43,13 @@ void init_my_Pheader(t_woody *woody, void *origin_file) {
 void mod_origin_header(t_woody *woody, void *origin_file, ssize_t origin_len) {
   // TODO
   (void)woody;
+  (void)origin_len;
 
   Elf64_Ehdr *tmp_header = (Elf64_Ehdr *)origin_file;
   tmp_header->e_phnum++;
   // printf("POFF Before: %ld\n", tmp_header->e_phoff);
   // printf("origin_len: %ld\n", origin_len);
-  tmp_header->e_phoff = origin_len;
+  tmp_header->e_phoff = woody->my_Pheader->p_offset;
   // printf("POFF After: %ld\n", tmp_header->e_phoff);
 }
 
@@ -57,13 +58,14 @@ void mod_phdr(t_woody *woody, void *origin_file, ssize_t origin_len) {
   (void)origin_file;
   Elf64_Addr highest_vaddr = get_max_add(woody);
 
+  woody->tmp = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
   printf("[!] %ld - %ld\n", (highest_vaddr + 0xfff) & ~0xfff, highest_vaddr);
   printf("[!] %ld\n", ((highest_vaddr + 0xfff) & ~0xfff) - highest_vaddr);
   for (int i = 0; i < woody->header->e_phnum; i++) {
     if (woody->p_header[i].p_type == PT_PHDR) {
-      woody->p_header[i].p_offset = origin_len;
-      woody->p_header[i].p_vaddr = origin_len;
-      woody->p_header[i].p_paddr = origin_len;
+      woody->p_header[i].p_offset = woody->my_Pheader->p_offset;
+      woody->p_header[i].p_vaddr = woody->my_Pheader->p_offset;
+      woody->p_header[i].p_paddr = woody->my_Pheader->p_offset;
       woody->p_header[i].p_memsz += 54;
       woody->p_header[i].p_filesz += 54;
       break;
@@ -95,15 +97,14 @@ void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
   int fd;
   int tmp;
   // Elf64_Addr highest_vaddr = get_max_add(woody);
-  // char a = '0';
+  char a = '0';
 
   fd = open("woody", O_WRONLY | O_CREAT, 0644);
   tmp = write(fd, origin_file, origin_len);
   printf("[ 1] Write: %d\n", tmp);
-  // for (long unsigned int i = 0;
-  //      i < ((highest_vaddr + 0xfff) & ~0xfff) - highest_vaddr; i++) {
-  //   write(fd, &a, 1);
-  // }
+  for (int i = 0; i < woody->tmp; i++) {
+    write(fd, &a, 1);
+  }
   tmp = write(fd, woody->p_header,
               (sizeof(Elf64_Phdr) * (woody->header->e_phnum)));
   printf("[ 2] Write: %d\n", tmp);
