@@ -27,6 +27,7 @@ typedef struct s_woody {
   Elf64_Phdr *my_Pheader;
   void *file;
   size_t file_size;
+
 } t_woody;
 
 // int check_the_origin_file(char *file);
@@ -54,8 +55,10 @@ void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 
 // get_data.c
-void init_my_Pheade(t_woody *woody, void *origin_file);
+void init_my_Pheader(t_woody *woody, void *origin_file);
 Elf64_Addr get_max_add(t_woody *woody);
+void get_elf64_dynamic(t_woody *woody, void *origin_file);
+void mod_phdr(t_woody *woody, void *origin_file, ssize_t origin_len);
 
 void main_put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
