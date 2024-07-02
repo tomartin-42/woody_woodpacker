@@ -45,10 +45,15 @@ void mod_origin_header(t_woody *woody, void *origin_file) {
   tmp_header->e_phoff = woody->my_Pheader->p_offset;
 }
 
-void mod_phdr(t_woody *woody, ssize_t origin_len) {
+static int calculate_padding(t_woody *woody, ssize_t origin_len) {
   Elf64_Addr highest_vaddr = get_max_add(woody);
+  int padding = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
+  return (padding);
+}
 
-  woody->padding = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
+void mod_phdr(t_woody *woody, ssize_t origin_len) {
+
+  woody->padding = calculate_padding(woody, origin_len);
   for (int i = 0; i < woody->header->e_phnum; i++) {
     if (woody->p_header[i].p_type == PT_PHDR) {
       woody->p_header[i].p_offset = woody->my_Pheader->p_offset;

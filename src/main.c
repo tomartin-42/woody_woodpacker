@@ -40,6 +40,10 @@ int main(int argc, char **argv) {
     // elf64_worker
     get_elf64_data(&woody, origin_file);
     main_set_data(&woody, origin_file, origin_len);
+    printf("Padding: %d\n", woody.padding);
+    print_elf_header((&woody)->header);
+    print_elf64_phdrs((&woody)->p_header, (&woody)->header->e_phnum);
+    print_elf64_phdrs((&woody)->my_Pheader, 1);
     put_file(&woody, origin_file, origin_len);
     printf("64 WORKER\n");
   } else {
