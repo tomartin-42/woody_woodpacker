@@ -4,6 +4,7 @@
 void get_elf64_data(t_woody *woody, void *origin_file) {
   get_elf64_header(woody, origin_file);
   get_elf64_pheader(woody, origin_file);
+  get_entry_point(woody, origin_file);
 }
 
 void get_elf64_header(t_woody *woody, void *origin_file) {
@@ -23,12 +24,8 @@ void get_elf64_pheader(t_woody *woody, void *origin_file) {
   // print_elf64_phdrs(woody->p_header, woody->header->e_phnum + 1);
 }
 
-void get_elf64_dynamic(t_woody *woody, void *origin_file) {
+void get_entry_point(t_woody *woody, void *origin_file) {
+  // get_origin_entry_point
+  (void)woody;
   (void)origin_file;
-
-  for (int i = 0; i < woody->header->e_phnum; i++) {
-    if (woody->p_header[i].p_type == PT_PHDR) {
-      break;
-    }
-  }
 }

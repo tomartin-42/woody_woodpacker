@@ -3,4 +3,5 @@ SRC_FILES = main.c \
             get_data_origin_file.c \
             prints.c \
             error.c \
-            set_data.c
+            set_data.c \
+            generate_file.c

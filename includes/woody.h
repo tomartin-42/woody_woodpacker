@@ -25,28 +25,20 @@ typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
   Elf64_Phdr *my_Pheader;
-  int tmp;
-  void *file;
-  size_t file_size;
+  int padding;
+  // void *file;
+  // size_t file_size;
 
 } t_woody;
 
-// int check_the_origin_file(char *file);
+// check_file.c
 int check_origin_elf(uint8_t *origin_file, size_t origin_len);
-// int main_check_input_file(char *file);
 
+// get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
-// get_data_origin_file
-// Elf64_Ehdr *get_elf64_header(int fd);
-// Elf64_Phdr *get_target_program_headers(Elf64_Ehdr *header, int fd);
-// void *map_file(int fd);
-
-// print.c
-// void print_header(Elf64_Ehdr *header);
-// void print_p_headers(Elf64_Phdr *p_header, int range);
-// void print_info_p_headers(Elf64_Phdr *p_headers, int range);
+void get_entry_point(t_woody *woody, void *origin_file);
 
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
@@ -56,12 +48,14 @@ void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 
 // get_data.c
-void init_my_Pheader(t_woody *woody, void *origin_file);
+void init_my_Pheader(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
-void get_elf64_dynamic(t_woody *woody, void *origin_file);
-void mod_phdr(t_woody *woody, void *origin_file, ssize_t origin_len);
+void mod_phdr(t_woody *woody, ssize_t origin_len);
 
-void main_put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
+void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len);
+void mod_origin_header(t_woody *woody, void *origin_file);
+
+// generate_file.c
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
-void mod_origin_header(t_woody *woody, void *origin_file, ssize_t origin_len);
+
 #endif

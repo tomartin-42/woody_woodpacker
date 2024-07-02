@@ -10,7 +10,6 @@ SRC_DIR = ./src/
 OBJ_DIR = ./obj/
 INC_DIR = ./includes/
 INC = -I$(INC_DIR)
-TEST_DIR = ./test/
 
 #SRC_FILES
 include ./src_list
@@ -41,16 +40,9 @@ print:
 clean:
 	@rm -Rf $(OBJ_DIR)
 	@make -C $(LIBFT_DIR) clean
-	@make -C $(TEST_DIR) fclean
 
 fclean: clean
 	@rm -f $(NAME)
 	@make -C $(LIBFT_DIR) fclean
-	@make -C $(TEST_DIR) fclean
 
-test: all
-	@make -C $(TEST_DIR)
-
-help:
-	@echo "Launch test: -> make test TEST=../src/<module.c>"
 re: fclean all
