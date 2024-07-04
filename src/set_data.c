@@ -12,18 +12,6 @@ void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
   mod_phdr(woody, origin_len);
 }
 
-Elf64_Addr get_max_add(t_woody *woody) {
-  Elf64_Addr highest_vaddr = 0;
-
-  for (int i = 0; i < woody->header->e_phnum; i++) {
-    if (woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz >
-        highest_vaddr) {
-      highest_vaddr = woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz;
-    }
-  }
-  return (highest_vaddr);
-}
-
 void init_my_Pheader(t_woody *woody) {
   Elf64_Addr highest_vaddr = get_max_add(woody);
 
@@ -43,12 +31,6 @@ void mod_origin_header(t_woody *woody, void *origin_file) {
 
   tmp_header->e_phnum++;
   tmp_header->e_phoff = woody->my_Pheader->p_offset;
-}
-
-static int calculate_padding(t_woody *woody, ssize_t origin_len) {
-  Elf64_Addr highest_vaddr = get_max_add(woody);
-  int padding = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
-  return (padding);
 }
 
 void mod_phdr(t_woody *woody, ssize_t origin_len) {

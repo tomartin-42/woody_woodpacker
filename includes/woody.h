@@ -18,15 +18,20 @@
   "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
   "\x05";
 
+#define PAYLOAD_LEN 37
+#define MAX_SIZE 2147483648 // 2Gb
+
 // ERROS
-#define NOT_ELF_ERROR "Not ELF file"
+#define TOO_BIG "[!!] Origin file too long"
+#define NOT_ELF_ERROR "[!!] Not ELF file"
+#define MALLOC_FAIL "[!!] Malloc Fail"
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
   Elf64_Phdr *my_Pheader;
-  int padding;
-  // void *file;
+  unsigned int padding;
+  void *file;
   // size_t file_size;
 
 } t_woody;
@@ -35,10 +40,14 @@ typedef struct s_woody {
 int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
-void get_elf64_data(t_woody *woody, void *origin_file);
+void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
 void get_entry_point(t_woody *woody, void *origin_file);
+Elf64_Addr get_max_add(t_woody *woody);
+unsigned long int calculate_my_size_file(t_woody *woody, ssize_t origin_len);
+void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
+                               ssize_t origin_len);
 
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
@@ -51,6 +60,7 @@ void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 void init_my_Pheader(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void mod_phdr(t_woody *woody, ssize_t origin_len);
+unsigned int calculate_padding(t_woody *woody, ssize_t origin_len);
 
 void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void mod_origin_header(t_woody *woody, void *origin_file);

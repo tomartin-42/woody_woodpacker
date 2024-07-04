@@ -1,10 +1,12 @@
 #include "../includes/woody.h"
 #include <elf.h>
+#include <sys/types.h>
 
-void get_elf64_data(t_woody *woody, void *origin_file) {
+void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
   get_elf64_header(woody, origin_file);
   get_elf64_pheader(woody, origin_file);
   get_entry_point(woody, origin_file);
+  reserve_memory_to_my_file(woody, origin_file, origin_len);
 }
 
 void get_elf64_header(t_woody *woody, void *origin_file) {
@@ -28,4 +30,42 @@ void get_entry_point(t_woody *woody, void *origin_file) {
   // get_origin_entry_point
   (void)woody;
   (void)origin_file;
+}
+
+Elf64_Addr get_max_add(t_woody *woody) {
+  Elf64_Addr highest_vaddr = 0;
+
+  for (int i = 0; i < woody->header->e_phnum; i++) {
+    if (woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz >
+        highest_vaddr) {
+      highest_vaddr = woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz;
+    }
+  }
+  return (highest_vaddr);
+}
+
+unsigned int calculate_padding(t_woody *woody, ssize_t origin_len) {
+  Elf64_Addr highest_vaddr = get_max_add(woody);
+  unsigned int padding = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
+  return (padding);
+}
+
+unsigned long int calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
+  unsigned long int size = 0;
+
+  size += origin_len; // Origin file leng
+  size += calculate_padding(woody, origin_len);
+  size += ((woody->header->e_phnum + 1) *
+           (woody->header->e_phentsize)); // p_header leng
+  size += PAYLOAD_LEN;
+
+  return (size);
+}
+
+void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
+                               ssize_t origin_len) {
+  woody->file = malloc(calculate_my_size_file(woody, origin_len));
+  if (woody->file == NULL) {
+    launch_error(MALLOC_FAIL, origin_file, origin_len);
+  }
 }

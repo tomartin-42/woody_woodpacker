@@ -41,6 +41,10 @@ typedef struct {
 int check_origin_elf(uint8_t *origin_file, size_t origin_len) {
   int ret_value;
 
+  if (origin_len >= MAX_SIZE) {
+    launch_error(TOO_BIG, origin_file, origin_len);
+  }
+
   if (ft_memcmp(origin_file, ELFMAG, SELFMAG)) {
     launch_error(NOT_ELF_ERROR, origin_file, origin_len);
   }
