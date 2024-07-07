@@ -50,8 +50,8 @@ unsigned int calculate_padding(t_woody *woody, ssize_t origin_len) {
   return (padding);
 }
 
-unsigned long int calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
-  unsigned long int size = 0;
+void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
+  size_t size = 0;
 
   size += origin_len; // Origin file leng
   size += calculate_padding(woody, origin_len);
@@ -59,12 +59,14 @@ unsigned long int calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
            (woody->header->e_phentsize)); // p_header leng
   size += PAYLOAD_LEN;
 
-  return (size);
+  woody->file_size = (size);
+  printf("My Buffer Len: %ld\n", woody->file_size);
 }
 
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
                                ssize_t origin_len) {
-  woody->file = malloc(calculate_my_size_file(woody, origin_len));
+  calculate_my_size_file(woody, origin_len);
+  woody->file = malloc(woody->file_size);
   if (woody->file == NULL) {
     launch_error(MALLOC_FAIL, origin_file, origin_len);
   }

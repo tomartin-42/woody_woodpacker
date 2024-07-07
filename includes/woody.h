@@ -25,14 +25,17 @@
 #define TOO_BIG "[!!] Origin file too long"
 #define NOT_ELF_ERROR "[!!] Not ELF file"
 #define MALLOC_FAIL "[!!] Malloc Fail"
+#define WRITE_FAIL "[!!] Write woody file fail"
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
   Elf64_Phdr *my_Pheader;
+  Elf64_Addr my_entry;
+  Elf64_Addr origin_entry;
   unsigned int padding;
   void *file;
-  // size_t file_size;
+  size_t file_size;
 
 } t_woody;
 
@@ -45,7 +48,7 @@ void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
 void get_entry_point(t_woody *woody, void *origin_file);
 Elf64_Addr get_max_add(t_woody *woody);
-unsigned long int calculate_my_size_file(t_woody *woody, ssize_t origin_len);
+void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
                                ssize_t origin_len);
 
@@ -67,5 +70,11 @@ void mod_origin_header(t_woody *woody, void *origin_file);
 
 // generate_file.c
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
+void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len);
 
+// free.c
+void free_origin_file(void *origin_file, ssize_t origin_len);
+void free_woody_file(void *file);
+void free_pheaders(Elf64_Phdr *p_header);
+void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 #endif
