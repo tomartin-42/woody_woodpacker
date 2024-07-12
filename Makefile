@@ -19,6 +19,8 @@ OBJ = $(addprefix $(OBJ_DIR), $(SRC_FILES:.c=.o))
 LIBFT = $(addprefix $(LIBFT_DIR), libft.a)
 
 all: obj $(LIBFT) $(NAME)
+	rm -Rf woody
+	rm -Rf woody2
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)	

@@ -18,7 +18,7 @@
   "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
   "\x05";
 
-#define PAYLOAD_LEN 37
+#define PAYLOAD_LEN 50
 #define MAX_SIZE 2147483648 // 2Gb
 
 // ERROS
@@ -31,7 +31,7 @@ typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
   Elf64_Phdr *my_Pheader;
-  Elf64_Addr my_entry;
+  Elf64_Off my_entry;
   Elf64_Addr origin_entry;
   unsigned int padding;
   void *file;
@@ -60,8 +60,9 @@ void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 
 // get_data.c
-void init_my_Pheader(t_woody *woody);
-Elf64_Addr get_max_add(t_woody *woody);
+void init_my_Pheader(t_woody *woody, ssize_t origin_len);
+Elf64_Addr get_max_paddr(t_woody *woody);
+Elf64_Addr get_max_vaddr(t_woody *woody);
 void mod_phdr(t_woody *woody, ssize_t origin_len);
 unsigned int calculate_padding(t_woody *woody, ssize_t origin_len);
 

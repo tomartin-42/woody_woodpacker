@@ -7,7 +7,7 @@ void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
   // Elf64_Addr highest_vaddr = get_max_add(woody);
   char a = '0';
 
-  fd = open("woody", O_WRONLY | O_CREAT, 0644);
+  fd = open("woody", O_WRONLY | O_CREAT, 0777);
   write(fd, origin_file, origin_len);
   // printf("[ 1] Write: %d\n", tmp);
   for (unsigned int i = 0; i < woody->padding; i++) {
@@ -24,19 +24,25 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   size_t count = 0;
   int fd;
 
-  ft_memcpy(woody->file, origin_file, origin_len);
+  ft_memcpy(woody->file, origin_file, origin_len); // Origin file
   count = origin_len;
-  ft_memset(woody->file + count, 42, woody->padding);
+  ft_memset(woody->file + count, 42, woody->padding); // Padding
   count += woody->padding;
+  printf("[!] File Adders My New Section: 0x%lx\n", count);
   ft_memcpy(woody->file + count, woody->p_header,
-            (sizeof(Elf64_Phdr) * (woody->header->e_phnum)));
+            (sizeof(Elf64_Phdr) * (woody->header->e_phnum))); // P_headers
   count += (sizeof(Elf64_Phdr) * (woody->header->e_phnum));
-  ft_memcpy(woody->file + count, woody->my_Pheader, sizeof(Elf64_Phdr));
+  woody->my_entry = count + sizeof(Elf64_Phdr);
+  woody->my_Pheader->p_offset = woody->my_entry;
+  ft_memcpy(woody->file + count, woody->my_Pheader,
+            sizeof(Elf64_Phdr)); // My_p_header
   count += sizeof(Elf64_Phdr);
-  woody->my_entry = count;
-  char code[] = "\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x12\x00\x00"
-                "\x00\x0f\x05\xb2\x2a\x31\xc0\xff\xc0\xf6\xe2\x89\xc7\x31\xc0"
-                "\xb0\x3c\x0f\x05\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
+
+  printf("init shellcode: 0x%lx\n", woody->my_entry);
+
+  char code[] =
+      "\xbf\x01\x00\x00\x00\x48\x8b\x35\xf4\x0f\x00\xba\x09\x00\x00\x00\xb8\x01"
+      "\x00\x00\x00\x0f\x05\x48\x31\xff\xb8\x3c\x00\x00\x00\x0f\x05";
 
   ft_memcpy(woody->file + count, code, 44);
   // change entry
@@ -44,7 +50,7 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
 
-  fd = open("woody2", O_WRONLY | O_CREAT, 0666);
+  fd = open("woody2", O_WRONLY | O_CREAT, 0777);
   if (write(fd, woody->file, woody->file_size) != (long int)woody->file_size) {
     launch_error(WRITE_FAIL, origin_file, origin_len);
   }

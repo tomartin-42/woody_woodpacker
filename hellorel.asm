@@ -5,7 +5,7 @@
         section .text
 
 _start: mov rdi, 1      ; stdout fd
-        mov rsi, msg
+        mov rsi, [rel msg]
         mov rdx, 9      ; 8 chars + newline
         mov rax, 1      ; write syscall
         syscall
@@ -16,4 +16,4 @@ _start: mov rdi, 1      ; stdout fd
         
         section .data
 
-msg:    db "hi thoro", 10
+msg:    db "hi thxrx", 10

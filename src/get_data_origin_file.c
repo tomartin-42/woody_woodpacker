@@ -32,7 +32,19 @@ void get_entry_point(t_woody *woody, void *origin_file) {
   (void)origin_file;
 }
 
-Elf64_Addr get_max_add(t_woody *woody) {
+Elf64_Addr get_max_paddr(t_woody *woody) {
+  Elf64_Addr highest_paddr = 0;
+
+  for (int i = 0; i < woody->header->e_phnum; i++) {
+    if (woody->p_header[i].p_offset + woody->p_header[i].p_filesz >
+        highest_paddr) {
+      highest_paddr = woody->p_header[i].p_offset + woody->p_header[i].p_filesz;
+    }
+  }
+  return (highest_paddr);
+}
+
+Elf64_Addr get_max_vaddr(t_woody *woody) {
   Elf64_Addr highest_vaddr = 0;
 
   for (int i = 0; i < woody->header->e_phnum; i++) {
@@ -45,21 +57,25 @@ Elf64_Addr get_max_add(t_woody *woody) {
 }
 
 unsigned int calculate_padding(t_woody *woody, ssize_t origin_len) {
-  Elf64_Addr highest_vaddr = get_max_add(woody);
-  unsigned int padding = ((highest_vaddr + 0xfff) & ~0xfff) - origin_len;
+  Elf64_Addr highest_paddr = get_max_paddr(woody);
+
+  unsigned int padding = ((highest_paddr + 0xfff) & ~0xfff) - origin_len;
   return (padding);
 }
 
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
   size_t size = 0;
+  unsigned int padding = calculate_padding(woody, origin_len);
+  woody->padding = padding;
 
   size += origin_len; // Origin file leng
-  size += calculate_padding(woody, origin_len);
+  size += padding;
+  printf("PADDING: %d\n", woody->padding);
   size += ((woody->header->e_phnum + 1) *
            (woody->header->e_phentsize)); // p_header leng
   size += PAYLOAD_LEN;
 
-  woody->file_size = (size);
+  woody->file_size = size;
   printf("My Buffer Len: %ld\n", woody->file_size);
 }
 
