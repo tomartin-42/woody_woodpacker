@@ -22,9 +22,9 @@ void init_my_Pheader(t_woody *woody, ssize_t origin_len) {
   woody->my_Pheader = (Elf64_Phdr *)malloc(sizeof(Elf64_Phdr));
   woody->my_Pheader->p_type = PT_LOAD;
   woody->my_Pheader->p_offset = (highest_paddr + 0xfff) & ~0xfff;
-  printf("[!] Offset My New Section: 0x%lx\n", woody->my_Pheader->p_offset);
+  // printf("[!] Offset My New Section: 0x%lx\n", woody->my_Pheader->p_offset);
   woody->my_Pheader->p_vaddr = (highest_vaddr + 0xfff) & ~0xfff;
-  printf("[!] V_addr My New Section: 0x%lx\n", woody->my_Pheader->p_vaddr);
+  // printf("[!] V_addr My New Section: 0x%lx\n", woody->my_Pheader->p_vaddr);
   woody->my_Pheader->p_paddr = (highest_vaddr + 0xfff) & ~0xfff;
   woody->my_Pheader->p_filesz = 0x5000;
   woody->my_Pheader->p_memsz = 0x5000;
