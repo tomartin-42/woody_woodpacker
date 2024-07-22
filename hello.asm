@@ -2,8 +2,6 @@
 
         global _start
 
-        section .text
-
 _start: mov rdi, 1      ; stdout fd
         mov rsi, msg
         mov rdx, 9      ; 8 chars + newline
@@ -14,6 +12,4 @@ _start: mov rdi, 1      ; stdout fd
         mov rax, 60     ; exit syscall
         syscall
         
-        section .data
-
 msg:    db "hi thoro", 10

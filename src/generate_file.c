@@ -16,7 +16,7 @@ void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
   write(fd, woody->p_header, (sizeof(Elf64_Phdr) * (woody->header->e_phnum)));
   // printf("[ 2] Write: %d\n", tmp);
   write(fd, woody->my_Pheader, sizeof(Elf64_Phdr));
-  // printf("[ 3] Write: %d\n", tmp);
+  // printf("[ 3] Write: %d\n", tmp;
   close(fd);
 }
 
@@ -44,27 +44,28 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   count += sizeof(Elf64_Phdr);
 
   char code[] =
-      "\xbf\x01\x00\x00\x00\x48\x8d\x35\x1c\x00\x00\x00\xba\x0a\x00\x00\x00\xb8"
-      "\x01\x00\x00\x00\x0f\x05\xb2\x2a\x31\xc0\xff\xc0\xf6\xe2\x89\xc7\x31\xc0"
-      "\xb0\x3c\x0f\x05\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
+      "\x48\x8d\x1d\xf9\xff\xff\xff\xbf\x01\x00\x00\x00\x48\x8d\x35\x1e\x00\x00"
+      "\x00\xba\x0a\x00\x00\x00\xb8\x01\x00\x00\x00\x0f\x05\x48\x8b\x05\x15\x00"
+      "\x00\x00\x48\x29\xc3\xff\xe3\x31\xc0\xb0\x3c\x0f\x05\x2e\x2e\x57\x4f\x4f"
+      "\x44\x59\x2e\x2e\x0a\x0f\x0f\x0f\x0f\x0f\x0f\x0f";
 
   // printf("init shellcode: 0x%lx\n", woody->my_entry);
-  //
-  // char code[] =
-  // "\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x12\x00\x00\x00"
-  //               "\x0f\x05\xb2\x2a\x31\xc0\xff\xc0\xf6\xe2\x89\xc7\x31\xc0\xb0"
-  //               "\x3c\x0f\x05\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
-
-  // char code[] =
-  //     "\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x12\x00\x00\x00\x0f\x05"
-  //     "\xb2\x2a\x31\xc0\xff\xc0\xf6\xe2\x89\xc7\x31\xc0\xb0\x3c\x0f\x05\x2e\x2e"
-  //     "\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
-
-  ft_memcpy(woody->file + count, code, 60);
+  // ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0]) - 1));
+  ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
+  count += (sizeof(code) / sizeof(code[0]));
+  // count += PAYLOAD_LEN;
   // change entry
   Elf64_Ehdr *tmp = (Elf64_Ehdr *)woody->file;
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
+  woody->entry_distance = (woody->my_entry - woody->origin_entry);
+  ft_memcpy(((woody->file + count) - 8), (void *)&woody->entry_distance, 8);
+  // Patch origin_entry to return addr
+  printf("Origin entry: 0x%lx\n", woody->origin_entry);
+  printf("Entry distance: 0x%lx\n", woody->entry_distance);
+  printf("Entry distance calculate: 0x%lx\n",
+         woody->my_entry - woody->entry_distance);
+  ft_memset(woody->file + count, 42, 8);
 
   fd = open("woody2", O_WRONLY | O_CREAT, 0777);
   if (write(fd, woody->file, woody->file_size) != (long int)woody->file_size) {

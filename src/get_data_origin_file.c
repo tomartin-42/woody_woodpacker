@@ -5,7 +5,7 @@
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
   get_elf64_header(woody, origin_file);
   get_elf64_pheader(woody, origin_file);
-  get_entry_point(woody, origin_file);
+  get_origin_entry_point(woody);
   reserve_memory_to_my_file(woody, origin_file, origin_len);
 }
 
@@ -26,10 +26,9 @@ void get_elf64_pheader(t_woody *woody, void *origin_file) {
   // print_elf64_phdrs(woody->p_header, woody->header->e_phnum + 1);
 }
 
-void get_entry_point(t_woody *woody, void *origin_file) {
+void get_origin_entry_point(t_woody *woody) {
   // get_origin_entry_point
-  (void)woody;
-  (void)origin_file;
+  woody->origin_entry = woody->header->e_entry;
 }
 
 Elf64_Addr get_max_paddr(t_woody *woody) {

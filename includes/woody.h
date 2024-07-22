@@ -18,7 +18,7 @@
   "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
   "\x05";
 
-#define PAYLOAD_LEN 50
+#define PAYLOAD_LEN 170
 #define MAX_SIZE 2147483648 // 2Gb
 
 // ERROS
@@ -36,6 +36,7 @@ typedef struct s_woody {
   unsigned int padding;
   void *file;
   size_t file_size;
+  long int entry_distance;
 
 } t_woody;
 
@@ -46,7 +47,7 @@ int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
-void get_entry_point(t_woody *woody, void *origin_file);
+void get_origin_entry_point(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
