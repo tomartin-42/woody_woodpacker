@@ -37,6 +37,7 @@ typedef struct s_woody {
   void *file;
   size_t file_size;
   long int entry_distance;
+  char *key;
 
 } t_woody;
 
@@ -79,4 +80,9 @@ void free_origin_file(void *origin_file, ssize_t origin_len);
 void free_woody_file(void *file);
 void free_pheaders(Elf64_Phdr *p_header);
 void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
+
+// encrypt.c
+void encrypt_main(t_woody *woody);
+char *get_random_key(void);
+
 #endif

@@ -60,13 +60,14 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
-  ft_memcpy(((woody->file + count) - 8), (void *)&woody->entry_distance, 8);
   // Patch origin_entry to return addr
-  printf("Origin entry: 0x%lx\n", woody->origin_entry);
-  printf("Entry distance: 0x%lx\n", woody->entry_distance);
-  printf("Entry distance calculate: 0x%lx\n",
-         woody->my_entry - woody->entry_distance);
-  ft_memset(woody->file + count, 42, 8);
+  ft_memcpy(((woody->file + count) - 8), (void *)&woody->entry_distance, 8);
+
+  // printf("Origin entry: 0x%lx\n", woody->origin_entry);
+  // printf("Entry distance: 0x%lx\n", woody->entry_distance);
+  // printf("Entry distance calculate: 0x%lx\n",
+  //        woody->my_entry - woody->entry_distance);
+  // ft_memset(woody->file + count, 42, 8);
 
   fd = open("woody2", O_WRONLY | O_CREAT, 0777);
   if (write(fd, woody->file, woody->file_size) != (long int)woody->file_size) {

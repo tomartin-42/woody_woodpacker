@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
   ssize_t origin_len;
   t_woody woody;
 
+  get_random_value();
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
     exit(1);

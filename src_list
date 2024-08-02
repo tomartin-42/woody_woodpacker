@@ -5,4 +5,5 @@ SRC_FILES = main.c \
             error.c \
             set_data.c \
             generate_file.c \
-            free.c
+            free.c \
+            encrypt.c
