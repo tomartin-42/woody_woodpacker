@@ -5,6 +5,7 @@
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
   get_elf64_header(woody, origin_file);
   get_elf64_pheader(woody, origin_file);
+  get_elf64_sheader(woody, origin_file);
   get_origin_entry_point(woody);
   reserve_memory_to_my_file(woody, origin_file, origin_len);
 }
@@ -24,6 +25,35 @@ void get_elf64_pheader(t_woody *woody, void *origin_file) {
   ft_memcpy(woody->p_header, woody->header->e_phoff + origin_file,
             sizeof(Elf64_Phdr) * (woody->header->e_phnum + 1));
   // print_elf64_phdrs(woody->p_header, woody->header->e_phnum + 1);
+}
+
+void get_elf64_sheader(t_woody *woody, void *origin_file) {
+  char check = 0;
+
+  woody->s_header =
+      (Elf64_Shdr *)malloc((sizeof(Elf64_Shdr) * (woody->header->e_shnum + 1)));
+  ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
+            sizeof(Elf64_Shdr) * (woody->header->e_shnum + 1));
+
+  const char *shstrtab =
+      woody->s_header[woody->header->e_shstrndx].sh_offset + origin_file;
+  printf("SHSTRTAB %s\n", shstrtab);
+
+  for (int i = 0; i < woody->header->e_shnum; i++) {
+    if (!ft_strncmp(shstrtab + woody->s_header[i].sh_name, ".text", 5)) {
+      check = 1;
+      printf("Section .text found:\n");
+      printf("  Name: %s\n", shstrtab + woody->s_header[i].sh_name);
+      printf("  Offset: 0x%lx\n", woody->s_header[i].sh_offset);
+      printf("  Address: 0x%lx\n", woody->s_header[i].sh_addr);
+      printf("  Size: 0x%lx\n", woody->s_header[i].sh_size);
+      break;
+    }
+  }
+  if (check == 0) {
+    // error not .text secction
+    exit(42);
+  }
 }
 
 void get_origin_entry_point(t_woody *woody) {
@@ -69,13 +99,13 @@ void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
 
   size += origin_len; // Origin file leng
   size += padding;
-  printf("PADDING: %d\n", woody->padding);
+  // printf("PADDING: %d\n", woody->padding);
   size += ((woody->header->e_phnum + 1) *
            (woody->header->e_phentsize)); // p_header leng
   size += PAYLOAD_LEN;
 
   woody->file_size = size;
-  printf("My Buffer Len: %ld\n", woody->file_size);
+  // printf("My Buffer Len: %ld\n", woody->file_size);
 }
 
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,

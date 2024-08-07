@@ -7,7 +7,6 @@ int main(int argc, char **argv) {
   ssize_t origin_len;
   t_woody woody;
 
-  get_random_value();
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
     exit(1);
@@ -17,7 +16,7 @@ int main(int argc, char **argv) {
     perror("Can not open target file");
     exit(errno);
   }
-  printf("FD -> %d\n", fd);
+  // printf("FD -> %d\n", fd);
 
   origin_len = lseek(fd, 0, SEEK_END);
   if (origin_len == -1) {
@@ -43,9 +42,9 @@ int main(int argc, char **argv) {
     main_set_data(&woody, origin_file, origin_len);
     put_file(&woody, origin_file, origin_len);
     put_data_in_buffer(&woody, origin_file, origin_len);
-    printf("64 WORKER\n");
+    // printf("64 WORKER\n");
   } else {
     // elf32_worker
-    printf("32 WORKER\n");
+    // printf("32 WORKER\n");
   }
 }

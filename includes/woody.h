@@ -26,10 +26,12 @@
 #define NOT_ELF_ERROR "[!!] Not ELF file"
 #define MALLOC_FAIL "[!!] Malloc Fail"
 #define WRITE_FAIL "[!!] Write woody file fail"
+#define KEYGEN_FAIL "[!!] Can not generate encrypt key"
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
   Elf64_Phdr *p_header;
+  Elf64_Shdr *s_header;
   Elf64_Phdr *my_Pheader;
   Elf64_Off my_entry;
   Elf64_Addr origin_entry;
@@ -48,6 +50,7 @@ int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
+void get_elf64_sheader(t_woody *woody, void *origin_file);
 void get_origin_entry_point(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
@@ -84,5 +87,6 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 // encrypt.c
 void encrypt_main(t_woody *woody);
 char *get_random_key(void);
+void encrypt_file(t_woody *woody);
 
 #endif

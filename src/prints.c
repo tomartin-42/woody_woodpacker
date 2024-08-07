@@ -1,5 +1,6 @@
 // In this file going the print functions
 #include "../includes/woody.h"
+#include <elf.h>
 
 void print_elf_header(Elf64_Ehdr *header) {
   printf("ELF Header:\n");
