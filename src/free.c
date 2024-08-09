@@ -16,7 +16,9 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len) {
   free_origin_file(origin_file, origin_len);
   free_woody_file(woody->file);
   free_pheaders(woody->p_header);
-  free_pheaders(woody->my_Pheader);
+  free(woody->header);
+  free(woody->my_Pheader);
   free(woody->s_header);
+  free(woody);
   // free(woody->key);
 }

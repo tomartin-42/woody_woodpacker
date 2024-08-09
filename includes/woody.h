@@ -40,6 +40,8 @@ typedef struct s_woody {
   size_t file_size;
   long int entry_distance;
   char *key;
+  Elf64_Off text_off;
+  uint64_t text_size;
 
 } t_woody;
 

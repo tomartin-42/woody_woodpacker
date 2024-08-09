@@ -5,7 +5,9 @@ int main(int argc, char **argv) {
   int fd;
   void *origin_file;
   ssize_t origin_len;
-  t_woody woody;
+  t_woody *woody;
+
+  woody = (t_woody *)malloc(sizeof(t_woody));
 
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
@@ -38,10 +40,10 @@ int main(int argc, char **argv) {
 
   if (check == ELFCLASS64) {
     // elf64_worker
-    get_elf64_data(&woody, origin_file, origin_len);
-    main_set_data(&woody, origin_file, origin_len);
-    put_file(&woody, origin_file, origin_len);
-    put_data_in_buffer(&woody, origin_file, origin_len);
+    get_elf64_data(woody, origin_file, origin_len);
+    main_set_data(woody, origin_file, origin_len);
+    put_file(woody, origin_file, origin_len);
+    put_data_in_buffer(woody, origin_file, origin_len);
     // printf("64 WORKER\n");
   } else {
     // elf32_worker

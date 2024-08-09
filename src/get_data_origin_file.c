@@ -31,22 +31,18 @@ void get_elf64_sheader(t_woody *woody, void *origin_file) {
   char check = 0;
 
   woody->s_header =
-      (Elf64_Shdr *)malloc((sizeof(Elf64_Shdr) * (woody->header->e_shnum + 1)));
+      (Elf64_Shdr *)malloc((sizeof(Elf64_Shdr) * (woody->header->e_shnum)));
   ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
-            sizeof(Elf64_Shdr) * (woody->header->e_shnum + 1));
+            sizeof(Elf64_Shdr) * (woody->header->e_shnum));
 
   const char *shstrtab =
       woody->s_header[woody->header->e_shstrndx].sh_offset + origin_file;
-  printf("SHSTRTAB %s\n", shstrtab);
 
   for (int i = 0; i < woody->header->e_shnum; i++) {
     if (!ft_strncmp(shstrtab + woody->s_header[i].sh_name, ".text", 5)) {
       check = 1;
-      printf("Section .text found:\n");
-      printf("  Name: %s\n", shstrtab + woody->s_header[i].sh_name);
-      printf("  Offset: 0x%lx\n", woody->s_header[i].sh_offset);
-      printf("  Address: 0x%lx\n", woody->s_header[i].sh_addr);
-      printf("  Size: 0x%lx\n", woody->s_header[i].sh_size);
+      woody->text_off = woody->s_header[i].sh_offset;
+      woody->text_size = woody->s_header[i].sh_size;
       break;
     }
   }
