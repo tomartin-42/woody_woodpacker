@@ -87,7 +87,7 @@ void free_pheaders(Elf64_Phdr *p_header);
 void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 
 // encrypt.c
-void encrypt_main(t_woody *woody);
+void main_encrypt(t_woody *woody);
 char *get_random_key(void);
 void encrypt_file(t_woody *woody);
 

@@ -75,12 +75,12 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   // My_p_header
   ft_memcpy(woody->file + count, woody->my_Pheader, sizeof(Elf64_Phdr));
   count += sizeof(Elf64_Phdr);
-
   char code[] =
       "\x52\x48\x8d\x1d\xf8\xff\xff\xff\xbf\x01\x00\x00\x00\x48\x8d\x35\x19\x00"
       "\x00\x00\xba\x0a\x00\x00\x00\xb8\x01\x00\x00\x00\x0f\x05\x5a\x48\x8d\x05"
-      "\x0f\x00\x00\x00\x48\x2b\x18\xff\xe3\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e"
-      "\x0a\x90\xd3\x01\x00\x00\x00\x00";
+      "\x29\x00\x00\x00\x48\x2b\x18\xff\xe3\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e"
+      "\x0a\x41\x41\x41\x41\x41\x41\x41\x41\x41\x42\x88\x77\x66\x55\x44\x33\x22"
+      "\x11\x88\x77\x66\x55\x44\x33\x22\x11\x88\x77\x66\x55\x44\x33\x22\x11";
 
   // printf("init shellcode: 0x%lx\n", woody->my_entry);
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
@@ -91,8 +91,9 @@ void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
+  // woody->file + cound = end_of_file
   // Patch origin_entry to return addr
-  ft_memcpy(((woody->file + count) - 8), (void *)&woody->entry_distance, 8);
+  ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
 
   // printf("Origin entry: 0x%lx\n", woody->origin_entry);
   // printf("Entry distance: 0x%lx\n", woody->entry_distance);

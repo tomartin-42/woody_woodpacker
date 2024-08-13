@@ -14,10 +14,10 @@ _start:
                 lea rax, [rel distance]
                 sub rbx, [rax]
                 jmp rbx
-                ;ret 
-                ;xor     rax, rax
-                ;mov     al, 60         
-                ;syscall
         
 msg             db "..WOODY..", 10
-distance        dq 0x000000000001d390
+key             db "AAAAAAAAA"
+key_size        db 0x42
+text_off        dq 0x1122334455667788
+text_size       dq 0x1122334455667788
+distance        dq 0x1122334455667788

@@ -1,7 +1,7 @@
 #include "../includes/woody.h"
 #include <fcntl.h>
 
-void encrypt_main(t_woody *woody) {
+void main_encrypt(t_woody *woody) {
   woody->key = get_random_key();
   // encrypt_file(woody);
 }
@@ -21,8 +21,7 @@ char *get_random_key() {
   for (int i = 0; i < 32; i++) {
     j = 0;
     while (j < 33 || j > 126) {
-      read(fd, c, 2);
-      if (j == -1) {
+      if (read(fd, c, 2) == -1) {
         launch_error(KEYGEN_FAIL, NULL, 0);
       }
       j = ft_atoi(c);
