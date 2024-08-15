@@ -2,24 +2,15 @@
 #include <elf.h>
 #include <sys/types.h>
 
-// void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
-//   int fd;
-//   // Elf64_Addr highest_vaddr = get_max_add(woody);
-//   char a = '0';
-//
-//   fd = open("woody", O_WRONLY | O_CREAT, 0777);
-//   write(fd, origin_file, origin_len);
-//   // printf("[ 1] Write: %d\n", tmp);
-//   for (unsigned int i = 0; i < woody->padding; i++) {
-//     write(fd, &a, 1);
-//   }
-//   write(fd, woody->p_header, (sizeof(Elf64_Phdr) *
-//   (woody->header->e_phnum)));
-//   // printf("[ 2] Write: %d\n", tmp);
-//   write(fd, woody->my_Pheader, sizeof(Elf64_Phdr));
-//   // printf("[ 3] Write: %d\n", tmp;
-//   close(fd);
-// }
+void put_file(t_woody *woody, void *origin_file, ssize_t origin_len) {
+  int fd;
+  fd = open("woody2", O_WRONLY | O_CREAT, 0777);
+  if (write(fd, woody->file, woody->file_size) != (long int)woody->file_size) {
+    launch_error(WRITE_FAIL, origin_file, origin_len);
+  }
+  close(fd);
+  clean_up(woody, origin_file, origin_len);
+}
 
 // void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t
 // origin_len) {

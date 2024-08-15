@@ -76,9 +76,12 @@ unsigned int calculate_padding(t_woody *woody, ssize_t origin_len);
 // set_data.c
 void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void mod_origin_header(t_woody *woody, void *origin_file);
-void put_data_in_buffer(t_woody *woody, void *origin_file, ssize_t origin_len);
+ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
+                           ssize_t origin_len);
+void patch_data(t_woody *woody, ssize_t count);
 
 // generate_file.c
+void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
 
 // free.c
 void free_origin_file(void *origin_file, ssize_t origin_len);

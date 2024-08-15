@@ -42,9 +42,9 @@ int main(int argc, char **argv) {
     // elf64_worker
     get_elf64_data(woody, origin_file, origin_len);
     main_set_data(woody, origin_file, origin_len);
-    main_encrypt(woody);
+    // main_encrypt(woody);
+    put_file(woody, origin_file, origin_len);
     // put_file(woody, origin_file, origin_len);
-    put_data_in_buffer(woody, origin_file, origin_len);
     // printf("64 WORKER\n");
   } else {
     // elf32_worker

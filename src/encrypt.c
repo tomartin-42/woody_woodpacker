@@ -1,9 +1,14 @@
 #include "../includes/woody.h"
+#include <elf.h>
 #include <fcntl.h>
+
+extern void asm_encrypt(void *text, unsigned long text_size, char *key,
+                        unsigned int key_size);
 
 void main_encrypt(t_woody *woody) {
   woody->key = get_random_key();
-  // encrypt_file(woody);
+  printf("KEY: %.32s\n", woody->key);
+  encrypt_file(woody);
 }
 
 char *get_random_key() {
@@ -29,9 +34,15 @@ char *get_random_key() {
     key[i] = j;
   }
   close(fd);
-  printf("KEY: %.32s\n", key);
   return (key);
 }
 
-// void encrypt_file(t_woody *woody) {}
-//
+void encrypt_file(t_woody *woody) {
+  Elf64_Off count = woody->text_off;
+
+  printf("total %p\n", woody->file + count);
+  printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
+  printf("text_siae %ld\n", woody->text_size);
+  printf("Key %p\n", woody->key);
+  asm_encrypt(count + woody->file, woody->text_size, woody->key, 32);
+}
