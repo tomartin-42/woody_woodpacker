@@ -42,6 +42,7 @@ typedef struct s_woody {
   char *key;
   Elf64_Off text_off;
   uint64_t text_size;
+  Elf64_Addr text_addr;
 
 } t_woody;
 
@@ -79,6 +80,7 @@ void mod_origin_header(t_woody *woody, void *origin_file);
 ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
                            ssize_t origin_len);
 void patch_data(t_woody *woody, ssize_t count);
+void mod_phdr_text_section(t_woody *woody);
 
 // generate_file.c
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);

@@ -40,9 +40,9 @@ char *get_random_key() {
 void encrypt_file(t_woody *woody) {
   Elf64_Off count = woody->text_off;
 
-  printf("total %p\n", woody->file + count);
-  printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
-  printf("text_siae %ld\n", woody->text_size);
+  // printf("total %p\n", woody->file + count);
+  // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
+  // printf("text_siae %ld\n", woody->text_size);
   printf("Key %p\n", woody->key);
   asm_encrypt(count + woody->file, woody->text_size, woody->key, 32);
 }
