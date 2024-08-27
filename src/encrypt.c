@@ -31,7 +31,8 @@ char *get_random_key() {
       }
       j = ft_atoi(c);
     }
-    key[i] = j;
+    // key[i] = j;
+    key[i] = 66;
   }
   close(fd);
   return (key);
