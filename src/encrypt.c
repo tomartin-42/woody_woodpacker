@@ -40,10 +40,11 @@ char *get_random_key() {
 
 void encrypt_file(t_woody *woody) {
   Elf64_Off count = woody->text_off;
-  printf("HOLA\n");
 
-  // printf("total %p\n", woody->file + count);
+  printf("text_offset %10x\n", (int)woody->text_off);
+  printf("text_offset + count %p\n", woody->file + count);
   // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
-  // printf("text_siae %ld\n", woody->text_size);
-  asm_encrypt(count + woody->file, woody->text_size, woody->key, 8);
+  printf("text_size %10x\n", (int)woody->text_size);
+  printf("key %.8s\n", woody->key);
+  /* asm_encrypt(count + woody->file, woody->text_size, woody->key, 8); */
 }
