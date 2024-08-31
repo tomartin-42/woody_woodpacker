@@ -81,11 +81,13 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
   ft_memcpy(woody->file + count, woody->my_Pheader, sizeof(Elf64_Phdr));
   count += sizeof(Elf64_Phdr);
   char code[] =
-      "\x52\x48\x8d\x1d\xf8\xff\xff\xff\xbf\x01\x00\x00\x00\x48\x8d\x35\x19\x00"
-      "\x00\x00\xba\x0a\x00\x00\x00\xb8\x01\x00\x00\x00\x0f\x05\x5a\x48\x8d\x05"
-      "\x29\x00\x00\x00\x48\x2b\x18\xff\xe3\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e"
-      "\x0a\x41\x41\x41\x41\x41\x41\x41\x41\x42\x88\x77\x66\x55\x44\x33\x22"
-      "\x11\x88\x77\x66\x55\x44\x33\x22\x11\x88\x77\x66\x55\x44\x33\x22\x11";
+      "\x52\x48\x8d\x1d\xf8\xff\xff\xff\xbf\x01\x00\x00\x00\x48\x8d\x35\x27\x00"
+      "\x00\x00\xba\x0a\x00\x00\x00\xb8\x01\x00\x00\x00\x0f\x05\x5a\x50\x53\x48"
+      "\x8d\x05\x2b\x00\x00\x00\x48\x2b\x18\x5b\x58\x48\x8d\x05\x2f\x00\x00\x00"
+      "\x48\x2b\x18\xff\xe3\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a\x41\x41\x41"
+      "\x41\x41\x41\x41\x41\x5a\x5a\x5a\x5a\x5a\x5a\x5a\x5a\x4f\x4f\x4f\x4f\x4f"
+      "\x4f\x4f\x4f\x53\x53\x53\x53\x53\x53\x53\x53\x44\x44\x44\x44\x44\x44\x44"
+      "\x44";
 
   // printf("init shellcode: 0x%lx\n", woody->my_entry);
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
@@ -96,6 +98,8 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
+  // .text offset to decrypt.
+  woody->text_dist = (woody->my_entry - woody->text_off);
   // woody->file + cound = end_of_file
   // Patch origin_entry to return addr
   // printf("Origin entry: 0x%lx\n", woody->origin_entry);
@@ -109,20 +113,20 @@ void patch_data(t_woody *woody, ssize_t count) {
   long int key_size = 0x0000000000000008;
   // char *tmp = woody->key;
   printf("Entry distance: 0x%lx\n", woody->entry_distance);
-  ft_memcpy(((woody->file + count) - 8), (void *)&woody->entry_distance, 8);
+  ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
   ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8);
-  ft_memcpy(((woody->file + count) - 25), &woody->text_off, 8);
+  ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8);
   ft_memcpy(((woody->file + count) - 33), &key_size, 8);
-  /* ft_memcpy(((woody->file + count) - 41), woody->key, 8); */
+  ft_memcpy(((woody->file + count) - 41), woody->key, 8);
 }
 
-// Found and change section p_flags to can encrypt .text secction
+// Found and change section p_flags to can encrypt/decrypt .text secction
 void mod_phdr_text_section(t_woody *woody) {
   for (int i = 0; i < woody->header->e_phnum; i++) {
     if (woody->p_header[i].p_type == PT_LOAD) {
-      if (woody->p_header[i].p_vaddr <= woody->text_addr &&
+      if (woody->p_header[i].p_vaddr <= woody->text_off &&
           woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz >=
-              woody->text_addr) {
+              woody->text_off) {
         woody->p_header[i].p_flags = 7;
       }
     }

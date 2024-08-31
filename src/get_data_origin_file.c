@@ -43,7 +43,6 @@ void get_elf64_sheader(t_woody *woody, void *origin_file) {
       check = 1;
       woody->text_off = woody->s_header[i].sh_offset;
       woody->text_size = woody->s_header[i].sh_size;
-      woody->text_addr = woody->s_header[i].sh_addr;
       break;
     }
   }

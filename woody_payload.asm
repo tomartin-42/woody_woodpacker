@@ -11,13 +11,19 @@ _start:
                 mov rax, 1      ; write syscall
                 syscall
                 pop rdx
+                push rax
+                push rbx
+                lea rax, [rel text_off]
+                sub rbx, [rax]
+                pop rbx
+                pop rax
                 lea rax, [rel distance]
                 sub rbx, [rax]
                 jmp rbx
         
 msg             db "..WOODY..", 10
 key             db "AAAAAAAA"
-key_size        db 0x1122334455667788
-text_off        dq 0x1122334455667788
-text_size       dq 0x1122334455667788
-distance        dq 0x1122334455667788
+key_size        dq "ZZZZZZZZ"
+text_off        dq "OOOOOOOO"
+text_size       dq "SSSSSSSS"
+distance        dq "DDDDDDDD"

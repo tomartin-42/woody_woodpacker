@@ -41,8 +41,9 @@ typedef struct s_woody {
   long int entry_distance;
   char *key;
   Elf64_Off text_off;
+  Elf64_Off test; // test .text offset
   uint64_t text_size;
-  Elf64_Addr text_addr;
+  Elf64_Addr text_dist;
 
 } t_woody;
 
