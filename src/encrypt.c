@@ -46,5 +46,5 @@ void encrypt_file(t_woody *woody) {
   // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
   printf("text_size %10x\n", (int)woody->text_size);
   printf("key %.8s\n", woody->key);
-  /* asm_encrypt(count + woody->file, woody->text_size, woody->key, 8); */
+  asm_encrypt(count + woody->file, woody->text_size, woody->key, 8);
 }
