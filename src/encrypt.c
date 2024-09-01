@@ -31,8 +31,8 @@ char *get_random_key() {
       }
       j = ft_atoi(c);
     }
-    // key[i] = j;
-    key[i] = 66;
+    key[i] = j;
+    // key[i] = 66;
   }
   close(fd);
   return (key);
@@ -41,10 +41,10 @@ char *get_random_key() {
 void encrypt_file(t_woody *woody) {
   Elf64_Off count = woody->text_off;
 
-  printf("text_offset %10x\n", (int)woody->text_off);
-  printf("text_offset + count %p\n", woody->file + count);
+  // printf("text_offset %10x\n", (int)woody->text_off);
+  // printf("text_offset + count %p\n", woody->file + count);
   // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
-  printf("text_size %10x\n", (int)woody->text_size);
-  printf("key %.8s\n", woody->key);
+  // printf("text_size %10x\n", (int)woody->text_size);
+  // printf("key %.8s\n", woody->key);
   asm_encrypt(count + woody->file, woody->text_size, woody->key, 8);
 }

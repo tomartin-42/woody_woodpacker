@@ -7,8 +7,6 @@ int main(int argc, char **argv) {
   ssize_t origin_len;
   t_woody *woody;
 
-  woody = (t_woody *)malloc(sizeof(t_woody));
-
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
     exit(1);
@@ -37,6 +35,8 @@ int main(int argc, char **argv) {
   close(fd);
 
   check = check_origin_elf(origin_file, origin_len);
+
+  woody = (t_woody *)malloc(sizeof(t_woody));
 
   if (check == ELFCLASS64) {
     // elf64_worker
