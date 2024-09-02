@@ -7,7 +7,7 @@ _start:
                 lea rbx, [rel _start]           ; load _star address to calculate .text section and jmp orign entry
                 mov rdi, 1                      ; stdout fd
                 lea rsi, [rel msg]
-                mov rdx, 10                     ; 9 chars + newline
+                mov rdx, 14                     ; 14 chars 
                 mov rax, 1                      ; write syscall
                 syscall
                 pop rdx                         ; restore rdx (syscall write)
@@ -57,8 +57,8 @@ continuel_xor:
                 sub rbx, [rax]
                 jmp rbx
         
-msg             db "..WOODY..", 10
-key             db "AAAAAAAA"
+msg             db "....WOODY....", 10
+key             times 64 db "C"             
 key_size        dq "ZZZZZZZZ"
 text_dist       dq "OOOOOOOO"
 text_size       dq "SSSSSSSS"

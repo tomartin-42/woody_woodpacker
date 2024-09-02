@@ -1,6 +1,7 @@
 // In this file going the print functions
 #include "../includes/woody.h"
 #include <elf.h>
+#include <stdint.h>
 
 void print_elf_header(Elf64_Ehdr *header) {
   printf("ELF Header:\n");
@@ -57,4 +58,12 @@ void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum) {
     printf("    Mem Size:       %lu bytes\n", p_header[i].p_memsz);
     printf("    Alignment:      %lu\n", p_header[i].p_align);
   }
+}
+
+void print_key(char *key, uint64_t key_size) {
+  printf("KEY: ");
+  for (uint64_t i = 0; i < key_size; i++) {
+    printf("%c", key[i]);
+  }
+  printf("\n");
 }

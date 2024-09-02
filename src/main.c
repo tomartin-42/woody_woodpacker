@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
   check = check_origin_elf(origin_file, origin_len);
 
   woody = (t_woody *)malloc(sizeof(t_woody));
+  ft_bzero(&woody->key_size, 8);
+  woody->key_size = 64;
 
   if (check == ELFCLASS64) {
     // elf64_worker

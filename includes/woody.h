@@ -44,6 +44,7 @@ typedef struct s_woody {
   Elf64_Off test; // test .text offset
   uint64_t text_size;
   Elf64_Addr text_dist;
+  uint8_t key_size;
 
 } t_woody;
 
@@ -67,6 +68,7 @@ void launch_error(char *msg, void *file, size_t file_len);
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
+void print_key(char *key, uint64_t key_size);
 
 // get_data.c
 void init_my_Pheader(t_woody *woody, ssize_t origin_len);
@@ -94,7 +96,7 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 
 // encrypt.c
 void main_encrypt(t_woody *woody);
-char *get_random_key(void);
+char *get_random_key(uint64_t key_size);
 void encrypt_file(t_woody *woody);
 
 #endif
