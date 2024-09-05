@@ -21,5 +21,4 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len) {
   free(woody->s_header);
   free(woody->key);
   free(woody);
-  // free(woody->key);
 }

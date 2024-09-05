@@ -22,6 +22,9 @@
 #define MAX_SIZE 2147483648 // 2Gb
 
 // ERROS
+#define NOT_OPEN_FILE "[!!] Can not open target file"
+#define LSEEK_ERROR "[!!] lseek fail"
+#define MMAP_ERROR "[!!] mmap fail"
 #define TOO_BIG "[!!] Origin file too long"
 #define NOT_ELF_ERROR "[!!] Not ELF file"
 #define MALLOC_FAIL "[!!] Malloc Fail"
@@ -52,15 +55,30 @@ typedef struct s_woody {
 int check_origin_elf(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
-void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
+void main_get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
 void get_elf64_sheader(t_woody *woody, void *origin_file);
 void get_origin_entry_point(t_woody *woody);
-Elf64_Addr get_max_add(t_woody *woody);
+// Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
                                ssize_t origin_len);
+Elf64_Addr get_max_paddr(t_woody *woody);
+Elf64_Addr get_max_vaddr(t_woody *woody);
+
+// get_data_32_origin_file.c
+void main_get_elf32_data(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_elf32_header(t_woody *woody, void *origin_file);
+void get_elf32_pheader(t_woody *woody, void *origin_file);
+void get_elf32_sheader(t_woody *woody, void *origin_file);
+void get_origin_entry_point(t_woody *woody);
+// Elf32_Addr get_max_add_32(t_woody *woody);
+void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
+void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
+                               ssize_t origin_len);
+Elf32_Addr get_max_paddr_32(t_woody *woody);
+Elf32_Addr get_max_vaddr_32(t_woody *woody);
 
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
@@ -72,8 +90,6 @@ void print_key(char *key, uint64_t key_size);
 
 // get_data.c
 void init_my_Pheader(t_woody *woody, ssize_t origin_len);
-Elf64_Addr get_max_paddr(t_woody *woody);
-Elf64_Addr get_max_vaddr(t_woody *woody);
 void mod_phdr(t_woody *woody, ssize_t origin_len);
 unsigned int calculate_padding(t_woody *woody, ssize_t origin_len);
 

@@ -6,4 +6,5 @@ SRC_FILES = main.c \
             set_data.c \
             generate_file.c \
             free.c \
-            encrypt.c
+            encrypt.c \
+            get_data_32_origin_file.c
