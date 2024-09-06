@@ -14,7 +14,7 @@ void main_set_data_32(t_woody_32 *woody, void *origin_file,
   mod_phdr_32(woody, origin_len);
   mod_phdr_text_section_32(woody);
   count = put_data_in_buffer_32(woody, origin_file, origin_len);
-  /* main_encrypt(woody); */
+  main_encrypt_32(woody);
   patch_data_32(woody, count);
 }
 

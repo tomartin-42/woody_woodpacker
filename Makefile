@@ -1,8 +1,8 @@
 NAME = woody_woodpacker
 
 CC = gcc
-ASM = nasm  # Ensamblador que estás usando, puede ser "nasm" o "as" (para GNU Assembler)
-ASMFLAGS = -f elf64  # Formato de salida de NASM (32-bit)
+ASM = nasm  
+ASMFLAGS = -f elf64  
 CFLAGS = -Wall -Werror -Wextra
 FSANITIZER = -g -fsanitize=address
 
