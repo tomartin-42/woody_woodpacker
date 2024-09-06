@@ -47,19 +47,10 @@ int main(int argc, char **argv) {
     main_set_data(woody, origin_file, origin_len);
     put_file(woody, origin_file, origin_len);
   } else if (check == ELFCLASS32) {
+    // elf32_worker
     woody_32 = (t_woody_32 *)malloc(sizeof(t_woody_32));
     ft_bzero(&woody_32->key_size, 8);
     woody_32->key_size = 32;
     get_elf32_data(woody_32, origin_file, origin_len);
-    woody = (t_woody *)malloc(sizeof(t_woody));
-    ft_bzero(&woody->key_size, 8);
-    woody->key_size = 32;
-    woody = (t_woody *)woody_32;
-    main_set_data(woody, origin_file, origin_len);
-    put_file(woody, origin_file, origin_len);
-
-    /* put_file(woody, origin_file, origin_len); */
-    // elf32_worker
-    // printf("32 WORKER\n");
   }
 }

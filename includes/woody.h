@@ -105,17 +105,25 @@ void print_elf_header(Elf64_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
 void print_key(char *key, uint64_t key_size);
 
-// get_data.c
-void init_my_Pheader(t_woody *woody, ssize_t origin_len);
-void mod_phdr(t_woody *woody, ssize_t origin_len);
-
 // set_data.c
+void init_my_Pheader(t_woody *woody, ssize_t origin_len);
 void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len);
+void mod_phdr(t_woody *woody, ssize_t origin_len);
 void mod_origin_header(t_woody *woody, void *origin_file);
 ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
                            ssize_t origin_len);
 void patch_data(t_woody *woody, ssize_t count);
 void mod_phdr_text_section(t_woody *woody);
+
+// set_data_32.c
+void init_my_Pheader_32(t_woody_32 *woody, ssize_t origin_len);
+void main_set_data_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
+void mod_phdr_32(t_woody_32 *woody, ssize_t origin_len);
+void mod_origin_header_32(t_woody_32 *woody, void *origin_file);
+ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
+                              ssize_t origin_len);
+void patch_data_32(t_woody_32 *woody, ssize_t count);
+void mod_phdr_text_section_32(t_woody_32 *woody);
 
 // generate_file.c
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
