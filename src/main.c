@@ -1,4 +1,5 @@
 #include "../includes/woody.h"
+#include <elf.h>
 
 int main(int argc, char **argv) {
   int check;
@@ -6,6 +7,7 @@ int main(int argc, char **argv) {
   void *origin_file;
   ssize_t origin_len;
   t_woody *woody;
+  t_woody_32 *woody_32;
 
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
@@ -36,18 +38,27 @@ int main(int argc, char **argv) {
 
   check = check_origin_elf(origin_file, origin_len);
 
-  woody = (t_woody *)malloc(sizeof(t_woody));
-  ft_bzero(&woody->key_size, 8);
-  woody->key_size = 64;
-
   if (check == ELFCLASS64) {
     // elf64_worker
+    woody = (t_woody *)malloc(sizeof(t_woody));
+    ft_bzero(&woody->key_size, 8);
+    woody->key_size = 64;
     get_elf64_data(woody, origin_file, origin_len);
     main_set_data(woody, origin_file, origin_len);
     put_file(woody, origin_file, origin_len);
-    // put_file(woody, origin_file, origin_len);
-    // printf("64 WORKER\n");
-  } else {
+  } else if (check == ELFCLASS32) {
+    woody_32 = (t_woody_32 *)malloc(sizeof(t_woody_32));
+    ft_bzero(&woody_32->key_size, 8);
+    woody_32->key_size = 32;
+    get_elf32_data(woody_32, origin_file, origin_len);
+    woody = (t_woody *)malloc(sizeof(t_woody));
+    ft_bzero(&woody->key_size, 8);
+    woody->key_size = 32;
+    woody = (t_woody *)woody_32;
+    main_set_data(woody, origin_file, origin_len);
+    put_file(woody, origin_file, origin_len);
+
+    /* put_file(woody, origin_file, origin_len); */
     // elf32_worker
     // printf("32 WORKER\n");
   }
