@@ -5,8 +5,8 @@
 
 extern void asm_encrypt(void *text, unsigned long text_size, char *key,
                         unsigned int key_size);
-/* extern void asm_encrypt_32(void *text, unsigned long text_size, char *key, */
-/*                            unsigned int key_size); */
+extern void asm_encrypt_32(void *text, unsigned long text_size, char *key,
+                           unsigned int key_size);
 
 void main_encrypt(t_woody *woody) {
   woody->key = get_random_key(woody->key_size);
@@ -67,6 +67,6 @@ void encrypt_file_32(t_woody_32 *woody) {
   // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
   // printf("text_size %10x\n", (int)woody->text_size);
   // printf("key %.8s\n", woody->key);
-  asm_encrypt(count + woody->file, woody->text_size, woody->key,
-              woody->key_size);
+  asm_encrypt_32(count + woody->file, woody->text_size, woody->key,
+                 woody->key_size);
 }

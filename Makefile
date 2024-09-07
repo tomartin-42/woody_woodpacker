@@ -14,7 +14,7 @@ INC_DIR = ./includes/
 INC = -I$(INC_DIR)
 
 # Archivos fuente de ensamblador
-ASM_FILES = asm_encrypt.asm 
+ASM_FILES = asm_encrypt.asm asm_encrypt_32.asm 
 ASM_SRC = $(addprefix $(SRC_DIR), $(ASM_FILES))
 ASM_OBJ = $(addprefix $(OBJ_DIR), $(ASM_FILES:.asm=.o))
 
