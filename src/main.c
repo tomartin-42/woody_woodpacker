@@ -52,5 +52,7 @@ int main(int argc, char **argv) {
     ft_bzero(&woody_32->key_size, 8);
     woody_32->key_size = 32;
     get_elf32_data(woody_32, origin_file, origin_len);
+    main_set_data_32(woody_32, origin_file, origin_len);
+    put_file_32(woody_32, origin_file, origin_len);
   }
 }

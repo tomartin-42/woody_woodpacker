@@ -8,8 +8,11 @@ _start:
                 mov edi, 1                      ; stdout fd
                 lea esi, [rel msg]
                 mov edx, 14                     ; 14 chars 
-                mov eax, 1                      ; write syscall
-                syscall
+                mov eax, 4                      ; write syscall
+                int 0x80
+                xor ebx, ebx
+                mov eax, 1
+                int 0x80
                 pop edx                         ; restore edx (syscall write)
 
                 ; init decrypt

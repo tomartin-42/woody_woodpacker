@@ -60,13 +60,14 @@ void encrypt_file(t_woody *woody) {
 }
 
 void encrypt_file_32(t_woody_32 *woody) {
-  Elf32_Off count = woody->text_off;
-
-  // printf("text_offset %10x\n", (int)woody->text_off);
-  // printf("text_offset + count %p\n", woody->file + count);
-  // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
+  /* Elf32_Off count = woody->text_off; */
+  (void)woody;
+  /* printf("text_offset %10x\n", (int)woody->text_off); */
+  /* printf("text_offset + count %p\n", woody->file + count); */
+  /* printf("some bytes before %.20x\n", *(Elf32_Off *)(woody->file + count));
+   */
   // printf("text_size %10x\n", (int)woody->text_size);
   // printf("key %.8s\n", woody->key);
-  asm_encrypt_32(count + woody->file, woody->text_size, woody->key,
-                 woody->key_size);
+  /* asm_encrypt(count + woody->file, woody->text_size, woody->key, */
+  /*             woody->key_size); */
 }

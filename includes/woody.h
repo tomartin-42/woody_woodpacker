@@ -102,7 +102,9 @@ void launch_error(char *msg, void *file, size_t file_len);
 
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
+void print_elf_header_32(Elf32_Ehdr *header);
 void print_elf64_phdrs(const Elf64_Phdr *p_header, int phnum);
+void print_elf32_phdrs(const Elf32_Phdr *p_header, int phnum);
 void print_key(char *key, uint64_t key_size);
 
 // set_data.c
@@ -127,6 +129,7 @@ void mod_phdr_text_section_32(t_woody_32 *woody);
 
 // generate_file.c
 void put_file(t_woody *woody, void *origin_file, ssize_t origin_len);
+void put_file_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
 
 // free.c
 void free_origin_file(void *origin_file, ssize_t origin_len);

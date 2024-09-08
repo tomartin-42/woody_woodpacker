@@ -14,7 +14,7 @@ void get_elf32_header(t_woody_32 *woody, void *origin_file) {
   // Copy Elf Header
   woody->header = (Elf32_Ehdr *)malloc(sizeof(Elf32_Ehdr));
   ft_memcpy(woody->header, origin_file, sizeof(Elf32_Ehdr));
-  // print_elf_header(woody->header);
+  /* print_elf_header_32(woody->header); */
 }
 
 void get_elf32_pheader(t_woody_32 *woody, void *origin_file) {
@@ -24,7 +24,7 @@ void get_elf32_pheader(t_woody_32 *woody, void *origin_file) {
        (woody->header->e_phnum + 1))); // +1 to add my Program_Header
   ft_memcpy(woody->p_header, woody->header->e_phoff + origin_file,
             sizeof(Elf32_Phdr) * (woody->header->e_phnum + 1));
-  // print_elf64_phdrs(woody->p_header, woody->header->e_phnum + 1);
+  /* print_elf32_phdrs(woody->p_header, woody->header->e_phnum + 1); */
 }
 
 void get_elf32_sheader(t_woody_32 *woody, void *origin_file) {
