@@ -1,7 +1,6 @@
 #include "../includes/woody.h"
 
 int main(int argc, char **argv) {
-  int check;
   int fd;
   void *origin_file;
   ssize_t origin_len;
@@ -16,13 +15,19 @@ int main(int argc, char **argv) {
     perror("Can not open target file");
     exit(errno);
   }
-  // printf("FD -> %d\n", fd);
 
   origin_len = lseek(fd, 0, SEEK_END);
   if (origin_len == -1) {
     close(fd);
     perror("lseek() error");
     exit(errno);
+  }
+
+  // No Elf Header
+  if (origin_len < 64) {
+    close(fd);
+    perror("Not Hedaer");
+    exit(42);
   }
 
   origin_file =
@@ -34,21 +39,13 @@ int main(int argc, char **argv) {
   }
   close(fd);
 
-  check = check_origin_elf(origin_file, origin_len);
+  check_origin_elf(origin_file, origin_len);
 
   woody = (t_woody *)malloc(sizeof(t_woody));
   ft_bzero(&woody->key_size, 8);
   woody->key_size = 64;
 
-  if (check == ELFCLASS64) {
-    // elf64_worker
-    get_elf64_data(woody, origin_file, origin_len);
-    main_set_data(woody, origin_file, origin_len);
-    put_file(woody, origin_file, origin_len);
-    // put_file(woody, origin_file, origin_len);
-    // printf("64 WORKER\n");
-  } else {
-    // elf32_worker
-    // printf("32 WORKER\n");
-  }
+  get_elf64_data(woody, origin_file, origin_len);
+  main_set_data(woody, origin_file, origin_len);
+  put_file(woody, origin_file, origin_len);
 }

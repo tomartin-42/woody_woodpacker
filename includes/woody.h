@@ -23,7 +23,7 @@
 
 // ERROS
 #define TOO_BIG "[!!] Origin file too long"
-#define NOT_ELF_ERROR "[!!] Not ELF file"
+#define NOT_ELF_ERROR "[!!] Not ELF64 file or ELF error"
 #define MALLOC_FAIL "[!!] Malloc Fail"
 #define WRITE_FAIL "[!!] Write woody file fail"
 #define KEYGEN_FAIL "[!!] Can not generate encrypt key"
@@ -49,7 +49,7 @@ typedef struct s_woody {
 } t_woody;
 
 // check_file.c
-int check_origin_elf(uint8_t *origin_file, size_t origin_len);
+void check_origin_elf(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);

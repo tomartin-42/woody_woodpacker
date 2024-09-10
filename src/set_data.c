@@ -143,7 +143,7 @@ void mod_phdr_text_section(t_woody *woody) {
       if (woody->p_header[i].p_vaddr <= woody->text_off &&
           woody->p_header[i].p_vaddr + woody->p_header[i].p_memsz >=
               woody->text_off) {
-        woody->p_header[i].p_flags = 7;
+        woody->p_header[i].p_flags = PF_R | PF_W | PF_X;
       }
     }
   }
