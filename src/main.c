@@ -23,13 +23,6 @@ int main(int argc, char **argv) {
     exit(errno);
   }
 
-  // No Elf Header
-  if (origin_len < 64) {
-    close(fd);
-    perror("Not Hedaer");
-    exit(42);
-  }
-
   origin_file =
       mmap(NULL, origin_len, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
   if (origin_file == MAP_FAILED) {
@@ -39,7 +32,7 @@ int main(int argc, char **argv) {
   }
   close(fd);
 
-  check_origin_elf(origin_file, origin_len);
+  main_checker(origin_file, origin_len);
 
   woody = (t_woody *)malloc(sizeof(t_woody));
   ft_bzero(&woody->key_size, 8);

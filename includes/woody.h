@@ -27,6 +27,17 @@
 #define MALLOC_FAIL "[!!] Malloc Fail"
 #define WRITE_FAIL "[!!] Write woody file fail"
 #define KEYGEN_FAIL "[!!] Can not generate encrypt key"
+#define ELF_HEADER_ERROR "[!!] Error, some problem in ELF Header"
+
+// ELF HEADER
+#define H_TYPE 16     // header type
+#define H_SIZE 52     // header size
+#define H_PH_OFF 32   // program header table offset
+#define H_SH_OFF 40   // secction header table offset
+#define H_PH_COUNT 54 // program header table entry count
+#define H_PH_SIZE 60  // program header table entry size
+#define H_SH_COUNT 58 // secction header table entry count
+#define H_SH_SIZE 60  // secction header table entry size
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
@@ -49,7 +60,10 @@ typedef struct s_woody {
 } t_woody;
 
 // check_file.c
+void main_checker(uint8_t *origin_file, size_t origin_len);
 void check_origin_elf(uint8_t *origin_file, size_t origin_len);
+void check_elf_header(uint8_t *origin_file, size_t origin_len);
+void check_elf_size(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
