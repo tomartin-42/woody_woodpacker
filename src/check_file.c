@@ -5,7 +5,6 @@
 void main_checker(uint8_t *origin_file, size_t origin_len) {
   check_origin_elf(origin_file, origin_len);
   check_elf_size(origin_file, origin_len);
-  /* check_elf_header(origin_file, origin_len); */
 }
 
 void check_origin_elf(uint8_t *origin_file, size_t origin_len) {
