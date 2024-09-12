@@ -6,6 +6,7 @@ void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
   get_elf64_header(woody, origin_file);
   get_elf64_pheader(woody, origin_file);
   get_elf64_sheader(woody, origin_file);
+  get_text_section(woody, origin_file);
   get_origin_entry_point(woody);
   reserve_memory_to_my_file(woody, origin_file, origin_len);
 }
@@ -28,13 +29,15 @@ void get_elf64_pheader(t_woody *woody, void *origin_file) {
 }
 
 void get_elf64_sheader(t_woody *woody, void *origin_file) {
-  char check = 0;
-
+  // Copy Section_Headers
   woody->s_header =
       (Elf64_Shdr *)malloc((sizeof(Elf64_Shdr) * (woody->header->e_shnum)));
   ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
             sizeof(Elf64_Shdr) * (woody->header->e_shnum));
+}
 
+void get_text_section(t_woody *woody, void *origin_file) {
+  char check = 0;
   const char *shstrtab =
       woody->s_header[woody->header->e_shstrndx].sh_offset + origin_file;
 

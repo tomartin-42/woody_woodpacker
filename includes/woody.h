@@ -34,10 +34,10 @@
 #define H_SIZE 52     // header size
 #define H_PH_OFF 32   // program header table offset
 #define H_SH_OFF 40   // secction header table offset
-#define H_PH_COUNT 54 // program header table entry count
-#define H_PH_SIZE 60  // program header table entry size
-#define H_SH_COUNT 58 // secction header table entry count
-#define H_SH_SIZE 60  // secction header table entry size
+#define H_PH_SIZE 54  // program header table entry size
+#define H_PH_COUNT 56 // program header table entry count
+#define H_SH_SIZE 58  // secction header table entry size
+#define H_SH_COUNT 60 // secction header table entry count
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
@@ -70,6 +70,7 @@ void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_elf64_header(t_woody *woody, void *origin_file);
 void get_elf64_pheader(t_woody *woody, void *origin_file);
 void get_elf64_sheader(t_woody *woody, void *origin_file);
+void get_text_section(t_woody *woody, void *origin_file);
 void get_origin_entry_point(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
