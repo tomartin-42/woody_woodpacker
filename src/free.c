@@ -21,5 +21,28 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len) {
   free(woody->s_header);
   free(woody->key);
   free(woody);
-  // free(woody->key);
+}
+
+void free_woody_struct(t_woody *woody) {
+  if (woody->header != NULL) {
+    free(woody->header);
+  }
+  if (woody->p_header != NULL) {
+    free(woody->p_header);
+  }
+  if (woody->s_header != NULL) {
+    free(woody->s_header);
+  }
+  if (woody->my_Pheader != NULL) {
+    free(woody->my_Pheader);
+  }
+  if (woody->file != NULL) {
+    free(woody->file);
+  }
+  if (woody->key != NULL) {
+    free(woody->key);
+  }
+  if (woody != NULL) {
+    free(woody);
+  }
 }
