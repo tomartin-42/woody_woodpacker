@@ -1,20 +1,20 @@
 #include "../includes/woody.h"
 
 static void init_t_woody(t_woody *woody) {
-  woody = NULL;
   woody->header = NULL;
   woody->p_header = NULL;
   woody->s_header = NULL;
   woody->my_Pheader = NULL;
   woody->file = NULL;
   woody->key = NULL;
+  woody = NULL;
 }
 
 int main(int argc, char **argv) {
   int fd;
   void *origin_file;
   ssize_t origin_len;
-  t_woody *woody;
+  t_woody *woody = NULL;
 
   if (argc != 2) {
     printf("incorrect num of arguments %i\n", argc);
@@ -42,10 +42,10 @@ int main(int argc, char **argv) {
   }
   close(fd);
 
-  init_t_woody(woody);
   main_checker(origin_file, origin_len);
 
   woody = (t_woody *)malloc(sizeof(t_woody));
+  init_t_woody(woody);
   ft_bzero(&woody->key_size, 8);
   woody->key_size = 64;
 

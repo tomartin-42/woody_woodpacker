@@ -68,10 +68,10 @@ void check_elf_size(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
-void get_elf64_header(t_woody *woody, void *origin_file);
-void get_elf64_pheader(t_woody *woody, void *origin_file);
-void get_elf64_sheader(t_woody *woody, void *origin_file);
-void get_text_section(t_woody *woody, void *origin_file);
+void get_elf64_header(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_elf64_pheader(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_elf64_sheader(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_text_section(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_origin_entry_point(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
@@ -81,7 +81,7 @@ void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
 void launch_headers_error(char *msg, t_woody *woody, void *file,
-                          size_t file_len);
+                          ssize_t file_len);
 
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
