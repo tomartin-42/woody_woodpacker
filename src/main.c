@@ -1,4 +1,5 @@
 #include "../includes/woody.h"
+#include <stdint.h>
 
 static void init_t_woody(t_woody *woody) {
   woody->header = NULL;
@@ -10,13 +11,32 @@ static void init_t_woody(t_woody *woody) {
   woody = NULL;
 }
 
+static uint8_t get_key_size(int argc, char **argv) {
+  if (argc == 2) {
+    return (64);
+  };
+  if (!ft_strncmp(argv[2], "-8", 2)) {
+    return (8);
+  } else if (!ft_strncmp(argv[2], "-16", 3)) {
+    return (16);
+  } else if (!ft_strncmp(argv[2], "-32", 3)) {
+    return (32);
+  } else if (!ft_strncmp(argv[2], "-64", 3)) {
+    return (64);
+  }
+  printf("Incorrect key size: %s\n", argv[2]);
+  printf("The key size is set to 64 bytes\n");
+
+  return (64);
+}
+
 int main(int argc, char **argv) {
   int fd;
   void *origin_file;
   ssize_t origin_len;
   t_woody *woody = NULL;
 
-  if (argc != 2) {
+  if (argc > 3 || argc < 2) {
     printf("incorrect num of arguments %i\n", argc);
     exit(1);
   }
@@ -47,7 +67,7 @@ int main(int argc, char **argv) {
   woody = (t_woody *)malloc(sizeof(t_woody));
   init_t_woody(woody);
   ft_bzero(&woody->key_size, 8);
-  woody->key_size = 64;
+  woody->key_size = get_key_size(argc, argv);
 
   get_elf64_data(woody, origin_file, origin_len);
   main_set_data(woody, origin_file, origin_len);

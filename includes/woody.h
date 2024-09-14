@@ -13,11 +13,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PAYLOAD                                                                \
-  "\xBF\x01\x00\x00\x00\x48\xBE\x00\x20\x40\x00\x00\x00\x00\x00\xBA\x0D\x00"   \
-  "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
-  "\x05";
-
 #define PAYLOAD_LEN 570
 #define MAX_SIZE 2147483648 // 2Gb
 
