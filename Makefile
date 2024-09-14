@@ -55,4 +55,3 @@ fclean: clean
 	@make -C $(LIBFT_DIR) fclean
 
 re: fclean all
-
