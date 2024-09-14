@@ -1,5 +1,15 @@
 #include "../includes/woody.h"
 
+static void init_t_woody(t_woody *woody) {
+  woody = NULL;
+  woody->header = NULL;
+  woody->p_header = NULL;
+  woody->s_header = NULL;
+  woody->my_Pheader = NULL;
+  woody->file = NULL;
+  woody->key = NULL;
+}
+
 int main(int argc, char **argv) {
   int fd;
   void *origin_file;
@@ -32,6 +42,7 @@ int main(int argc, char **argv) {
   }
   close(fd);
 
+  init_t_woody(woody);
   main_checker(origin_file, origin_len);
 
   woody = (t_woody *)malloc(sizeof(t_woody));

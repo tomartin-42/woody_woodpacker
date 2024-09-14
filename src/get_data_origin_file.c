@@ -49,7 +49,7 @@ void get_text_section(t_woody *woody, void *origin_file) {
       break;
     }
   }
-  if (check == 0) {
+  if (check != 0) {
     // error not .text secction
     exit(42);
   }
@@ -112,6 +112,6 @@ void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
   calculate_my_size_file(woody, origin_len);
   woody->file = malloc(woody->file_size);
   if (woody->file == NULL) {
-    launch_error(MALLOC_FAIL, origin_file, origin_len);
+    launch_headers_error(MALLOC_FAIL, woody, origin_file, origin_len);
   }
 }

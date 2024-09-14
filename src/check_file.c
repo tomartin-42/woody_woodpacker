@@ -49,3 +49,5 @@ void check_elf_size(uint8_t *origin_file, size_t origin_len) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
 }
+
+/* void check_elf_header(uint8_t *origin_file, size_t origin_len) {} */

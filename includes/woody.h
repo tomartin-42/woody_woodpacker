@@ -28,6 +28,7 @@
 #define WRITE_FAIL "[!!] Write woody file fail"
 #define KEYGEN_FAIL "[!!] Can not generate encrypt key"
 #define ELF_HEADER_ERROR "[!!] Error, some problem in ELF Header"
+#define NOT_TEXT_SECTION "[!!] .text section not found"
 
 // ELF HEADER
 #define H_TYPE 16     // header type
@@ -79,6 +80,8 @@ void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
 
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
+void launch_headers_error(char *msg, t_woody *woody, void *file,
+                          size_t file_len);
 
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
@@ -108,6 +111,7 @@ void free_origin_file(void *origin_file, ssize_t origin_len);
 void free_woody_file(void *file);
 void free_pheaders(Elf64_Phdr *p_header);
 void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
+void free_woody_struct(t_woody *woody);
 
 // encrypt.c
 void main_encrypt(t_woody *woody);
