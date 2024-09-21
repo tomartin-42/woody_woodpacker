@@ -82,17 +82,16 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
   ft_memcpy(woody->file + count, woody->my_Pheader, sizeof(Elf32_Phdr));
   count += sizeof(Elf32_Phdr);
   char code[] =
-      "\x52\x8d\x1d\x00\x90\x04\x08\xbf\x01\x00\x00\x00\x8d\x35\x67\x90\x04\x08"
-      "\xba\x0e\x00\x00\x00\xb8\x04\x00\x00\x00\x0f\x05\x5a\x50\x53\x56\x52\x51"
-      "\x8d\x05\x9d\x90\x04\x08\x2b\x18\x89\xdf\x8d\x35\xa5\x90\x04\x08\x8b\x36"
-      "\x8d\x15\x75\x90\x04\x08\x8d\x0d\x95\x90\x04\x08\x8b\x09\x31\xdb\x8a\x07"
-      "\x32\x04\x1a\x88\x07\x47\x43\x39\xcb\x7c\x02\x31\xdb\x4e\x75\xee\x59\x5a"
-      "\x5e\x5b\x58\x8d\x05\xad\x90\x04\x08\x2b\x18\xff\xe3\x2e\x2e\x2e\x2e\x57"
-      "\x4f\x4f\x44\x59\x2e\x2e\x2e\x2e\x0a\x43\x43\x43\x43\x43\x43\x43\x43\x43"
+      "\x54\x50\x53\x51\x52\xe8\x00\x00\x00\x00\x5e\x83\xee\x0a\x52\x89\xf1\x83"
+      "\xc1\x69\xbb\x01\x00\x00\x00\xba\x0e\x00\x00\x00\xb8\x04\x00\x00\x00\xcd"
+      "\x80\x5a\x8d\x86\x9b\x00\x00\x00\x89\xf7\x2b\x38\x8d\x86\x9f\x00\x00\x00"
+      "\x8b\x00\x8d\x56\x77\x8d\x8e\x97\x00\x00\x00\x8b\x09\x31\xdb\x50\x8a\x07"
+      "\x32\x04\x1a\x88\x07\x47\x43\x39\xcb\x7c\x02\x31\xdb\x58\x48\x75\xec\x8d"
+      "\x86\xa3\x00\x00\x00\x2b\x30\x5a\x59\x5b\x58\x5c\xff\xd6\xc3\x2e\x2e\x2e"
+      "\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x2e\x2e\x0a\x43\x43\x43\x43\x43\x43\x43"
       "\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43\x43"
-      "\x43\x43\x43\x43\x43\x5a\x5a\x5a\x5a\x5a\x5a\x5a\x5a\x4f\x4f\x4f\x4f\x4f"
-      "\x4f\x4f\x4f\x53\x53\x53\x53\x53\x53\x53\x53\x44\x44\x44\x44\x44\x44\x44"
-      "\x44";
+      "\x43\x43\x43\x43\x43\x43\x43\x5a\x5a\x5a\x5a\x4f\x4f\x4f\x4f\x53\x53\x53"
+      "\x53\x44\x44\x44\x44";
 
   // printf("init shellcode: 0x%lx\n", woody->my_entry);
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
@@ -102,8 +101,10 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
   Elf32_Ehdr *tmp = (Elf32_Ehdr *)woody->file;
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
+  /* ft_bzero(&woody->entry_distance, 8); */
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
   // .text offset to decrypt.
+  /* ft_bzero(&woody->text_dist, 8); */
   woody->text_dist = (woody->my_entry - woody->text_off);
   // woody->file + cound = end_of_file
   // Patch origin_entry to return addr
@@ -116,13 +117,15 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
 
 void patch_data_32(t_woody_32 *woody, ssize_t count) {
   // char *tmp = woody->key;
-  (void)count;
-  printf("Entry distance: 0x%lx\n", woody->entry_distance);
-  ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
-  /* ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8); */
-  /* ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8); */
-  /* ft_memcpy(((woody->file + count) - 33), &woody->key_size, 8); */
-  /* ft_memcpy(((woody->file + count) - 97), woody->key, woody->key_size); */
+  printf("entry_distance: 0x%lx\n", woody->entry_distance);
+  printf("text_size: %x\n", (uint32_t)woody->text_size);
+  printf("text_dist: %lx\n", (unsigned long)woody->text_dist);
+  printf("key_size: %lx\n", (unsigned long)woody->key_size);
+  ft_memcpy(((woody->file + count) - 5), (void *)&woody->entry_distance, 4);
+  ft_memcpy(((woody->file + count) - 9), &woody->text_size, 4);
+  ft_memcpy(((woody->file + count) - 13), &woody->text_dist, 4);
+  ft_memcpy(((woody->file + count) - 17), &woody->key_size, 4);
+  ft_memcpy(((woody->file + count) - 49), woody->key, woody->key_size);
 }
 
 // Found and change section p_flags to can encrypt/decrypt .text secction

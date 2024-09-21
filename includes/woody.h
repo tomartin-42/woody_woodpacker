@@ -141,6 +141,7 @@ void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 void main_encrypt(t_woody *woody);
 void main_encrypt_32(t_woody_32 *woody);
 char *get_random_key(uint64_t key_size);
+char *get_random_key_32(uint8_t key_size);
 void encrypt_file(t_woody *woody);
 void encrypt_file_32(t_woody_32 *woody);
 

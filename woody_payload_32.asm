@@ -3,39 +3,47 @@
                 global _start
 
 _start: 
-                push edx                        ; save edx because w syscall change this reg
-                lea ebx, [rel _start]           ; load _star address to calculate .text section and jmp orign entry
-                mov edi, 1                      ; stdout fd
-                lea esi, [rel msg]
+                push esp
+                push eax
+                push ebx
+                push ecx
+                push edx
+                call $ + 5
+                pop esi
+                sub esi, 10
+                ;push esi                        ; save esi _start address
+                push edx                        ; save edx because write syscall change this reg
+                mov ecx, esi                    
+                add ecx, 105 
+                mov ebx, 1                      ; output fd
                 mov edx, 14                     ; 14 chars 
                 mov eax, 4                      ; write syscall
-                int 0x80
-                xor ebx, ebx
-                mov eax, 1
-                int 0x80
+                int 0x80                        
                 pop edx                         ; restore edx (syscall write)
-
-                ; init decrypt
+                ; End write ....WOODY....
+                ;
+                ; init decrypt ------------------------------------
                 ; edi = text_section (puntero a la sección de texto)
-                ; esi = text_size (tamaño del texto)
+                ; eax = text_size (tamaño del texto)
                 ; edx = key (puntero a la clave de cifrado)
                 ; ecx = key_size (tamaño de la clave)
-                push eax                        ; save eax
-                push ebx                        ; save ebx, _start address
-                push esi                        ; save esi
-                push edx                        ; save edx
-                push ecx                        ; save ecx
-                lea eax, [rel text_dist]        ; load .text distance in eax
-                sub ebx, [eax]                  ; calculate .text section address, now in ebx
-                mov edi, ebx                    ; pass .text address to edi
-                lea esi, [rel text_size]        ; load in esi .text section size
-                mov esi, [esi]
-                lea edx, [rel key]              ; load in edx decrypt key
-                lea ecx, [rel key_size]         ; load in edx key size
+                ; ebx = conter
+                ; push eax                        ; save eax
+                ; push edx                        ; save edx
+                ; push ecx                        ; save ecx
+                ; push ebx
+                lea eax, [esi + 155]            ;; load .text distance in eax
+                mov edi, esi
+                sub edi, [eax]                  ; calculate .text section address
+                lea eax, [esi + 159]            ;; load in eax .text section size
+                mov eax, [eax]
+                lea edx, [esi + 119]            ; load in edx decrypt key
+                lea ecx, [esi + 151]            ;; load in edx key size
                 mov ecx, [ecx]
                 xor ebx, ebx                    ; init to 0 ebx, use for conter
 
 xor_loop:
+                push eax                        ; save text_size
                 mov al, [edi]
                 xor al, [edx + ebx]
                 mov [edi], al
@@ -47,22 +55,24 @@ xor_loop:
                 xor ebx, ebx
 
 continuel_xor:
-                dec esi
+                pop eax
+                dec eax                         ; decrement eax .text section size
                 jnz xor_loop
         
-                pop ecx
+
+                lea eax, [esi + 163]            ;
+                sub esi, [eax]
                 pop edx
-                pop esi
+                pop ecx
                 pop ebx
                 pop eax
-
-                lea eax, [rel distance]
-                sub ebx, [eax]
-                jmp ebx
+                pop esp
+                call esi
+                ret
         
 msg             db "....WOODY....", 10
 key             times 32 db "C"             
-key_size        dq "ZZZZZZZZ"
-text_dist       dq "OOOOOOOO"
-text_size       dq "SSSSSSSS"
-distance        dq "DDDDDDDD"
+key_size        db "ZZZZ"
+text_dist       db "OOOO"
+text_size       db "SSSS"
+distance        db "DDDD"
