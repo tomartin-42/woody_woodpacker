@@ -25,7 +25,7 @@
 #define ELF_HEADER_ERROR "[!!] Error, some problem in ELF Header"
 #define NOT_TEXT_SECTION "[!!] .text section not found"
 
-// ELF HEADER
+// ELF HEADER 64
 #define H_TYPE 16     // header type
 #define H_SIZE 52     // header size
 #define H_PH_OFF 32   // program header table offset
@@ -34,6 +34,16 @@
 #define H_PH_COUNT 56 // program header table entry count
 #define H_SH_SIZE 58  // secction header table entry size
 #define H_SH_COUNT 60 // secction header table entry count
+
+// ELF HEADER 32
+#define H_TYPE_32 16     // header type
+#define H_SIZE_32 52     // header size
+#define H_PH_OFF_32 32   // program header table offset
+#define H_SH_OFF_32 40   // secction header table offset
+#define H_PH_SIZE_32 54  // program header table entry size
+#define H_PH_COUNT_32 56 // program header table entry count
+#define H_SH_SIZE_32 58  // secction header table entry size
+#define H_SH_COUNT_32 60 // secction header table entry count
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
@@ -74,10 +84,11 @@ typedef struct s_woody_32 {
 } t_woody_32;
 
 // check_file.c
-void main_checker(uint8_t *origin_file, size_t origin_len);
+int main_checker(uint8_t *origin_file, size_t origin_len);
 void check_origin_elf(uint8_t *origin_file, size_t origin_len);
 void check_elf_header(uint8_t *origin_file, size_t origin_len);
 void check_elf_size(uint8_t *origin_file, size_t origin_len);
+void check_elf_size_32(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);

@@ -40,8 +40,8 @@ char *get_random_key(uint64_t key_size) {
       }
       j = ft_atoi(c);
     }
-    /* key[i] = j; */
-    key[i] = 66;
+    key[i] = j;
+    /* key[i] = 66; */
   }
   close(fd);
   return (key);

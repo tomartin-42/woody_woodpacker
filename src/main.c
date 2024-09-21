@@ -31,11 +31,28 @@ static uint8_t get_key_size(int argc, char **argv) {
   return (64);
 }
 
+static uint8_t get_key_size_32(int argc, char **argv) {
+  if (argc == 2) {
+    return (32);
+  };
+  if (!ft_strncmp(argv[2], "-8", 2)) {
+    return (8);
+  } else if (!ft_strncmp(argv[2], "-16", 3)) {
+    return (16);
+  } else if (!ft_strncmp(argv[2], "-32", 3)) {
+    return (32);
+  }
+  printf("Incorrect key size: %s\n", argv[2]);
+  printf("The key size is set to 32 bytes\n");
+
+  return (32);
+}
+
 int main(int argc, char **argv) {
   int fd;
   void *origin_file;
   ssize_t origin_len;
-  int check = 0;
+  int check;
   t_woody *woody;
   t_woody_32 *woody_32;
 
@@ -65,24 +82,25 @@ int main(int argc, char **argv) {
   }
   close(fd);
 
-  main_checker(origin_file, origin_len);
+  check = main_checker(origin_file, origin_len);
 
   /* <<<<<<< HEAD */
   /* if (check == ELFCLASS64) { */
-  if (check == 0) {
+  if (check == 64) {
     // elf64_worker
     woody = (t_woody *)malloc(sizeof(t_woody));
+    init_t_woody(woody);
     ft_bzero(&woody->key_size, 8);
-    woody->key_size = 64;
+    woody->key_size = get_key_size(argc, argv);
     get_elf64_data(woody, origin_file, origin_len);
     main_set_data(woody, origin_file, origin_len);
     put_file(woody, origin_file, origin_len);
-  } else if (check == 1) {
+  } else if (check == 32) {
     /* } else if (check == ELFCLASS32) { */
     // elf32_worker
     woody_32 = (t_woody_32 *)malloc(sizeof(t_woody_32));
     ft_bzero(&woody_32->key_size, 8);
-    woody_32->key_size = 32;
+    woody_32->key_size = get_key_size_32(argc, argv);
     get_elf32_data(woody_32, origin_file, origin_len);
     main_set_data_32(woody_32, origin_file, origin_len);
     put_file_32(woody_32, origin_file, origin_len);
