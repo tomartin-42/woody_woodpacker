@@ -3,40 +3,47 @@
 #include <sys/types.h>
 
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
-  get_elf64_header(woody, origin_file);
-  get_elf64_pheader(woody, origin_file);
-  get_elf64_sheader(woody, origin_file);
-  get_text_section(woody, origin_file);
+  get_elf64_header(woody, origin_file, origin_len);
+  get_elf64_pheader(woody, origin_file, origin_len);
+  get_elf64_sheader(woody, origin_file, origin_len);
+  get_text_section(woody, origin_file, origin_len);
   get_origin_entry_point(woody);
   reserve_memory_to_my_file(woody, origin_file, origin_len);
 }
 
-void get_elf64_header(t_woody *woody, void *origin_file) {
-  // Copy Elf Header
+// Copy Elf Header
+void get_elf64_header(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->header = (Elf64_Ehdr *)malloc(sizeof(Elf64_Ehdr));
+  if (woody->header == NULL) {
+    launch_headers_error(MALLOC_FAIL, woody, origin_file, origin_len);
+  }
   ft_memcpy(woody->header, origin_file, sizeof(Elf64_Ehdr));
-  // print_elf_header(woody->header);
 }
 
-void get_elf64_pheader(t_woody *woody, void *origin_file) {
-  // Copy Program_Headers
+// Copy Program_Headers
+void get_elf64_pheader(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->p_header = (Elf64_Phdr *)malloc(
       (sizeof(Elf64_Phdr) *
        (woody->header->e_phnum + 1))); // +1 to add my Program_Header
+  if (woody->p_header == NULL) {
+    launch_headers_error(MALLOC_FAIL, woody, origin_file, origin_len);
+  }
   ft_memcpy(woody->p_header, woody->header->e_phoff + origin_file,
             sizeof(Elf64_Phdr) * (woody->header->e_phnum + 1));
-  // print_elf64_phdrs(woody->p_header, woody->header->e_phnum + 1);
 }
 
-void get_elf64_sheader(t_woody *woody, void *origin_file) {
-  // Copy Section_Headers
+// Copy Section_Headers
+void get_elf64_sheader(t_woody *woody, void *origin_file, ssize_t origin_len) {
   woody->s_header =
       (Elf64_Shdr *)malloc((sizeof(Elf64_Shdr) * (woody->header->e_shnum)));
+  if (woody->s_header == NULL) {
+    launch_headers_error(MALLOC_FAIL, woody, origin_file, origin_len);
+  }
   ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
             sizeof(Elf64_Shdr) * (woody->header->e_shnum));
 }
 
-void get_text_section(t_woody *woody, void *origin_file) {
+void get_text_section(t_woody *woody, void *origin_file, ssize_t origin_len) {
   char check = 0;
   const char *shstrtab =
       woody->s_header[woody->header->e_shstrndx].sh_offset + origin_file;
@@ -49,14 +56,14 @@ void get_text_section(t_woody *woody, void *origin_file) {
       break;
     }
   }
-  if (check != 0) {
-    // error not .text secction
+  if (check == 0) {
+    launch_headers_error(NOT_TEXT_SECTION, woody, origin_file, origin_len);
     exit(42);
   }
 }
 
+// get_origin_entry_point
 void get_origin_entry_point(t_woody *woody) {
-  // get_origin_entry_point
   woody->origin_entry = woody->header->e_entry;
 }
 
@@ -98,13 +105,11 @@ void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
 
   size += origin_len; // Origin file leng
   size += padding;
-  // printf("PADDING: %d\n", woody->padding);
   size += ((woody->header->e_phnum + 1) *
            (woody->header->e_phentsize)); // p_header leng
   size += PAYLOAD_LEN;
 
   woody->file_size = size;
-  // printf("My Buffer Len: %ld\n", woody->file_size);
 }
 
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,

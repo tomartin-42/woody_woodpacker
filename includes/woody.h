@@ -13,11 +13,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PAYLOAD                                                                \
-  "\xBF\x01\x00\x00\x00\x48\xBE\x00\x20\x40\x00\x00\x00\x00\x00\xBA\x0D\x00"   \
-  "\x00\x00\xB8\x01\x00\x00\x00\x0F\x05\x48\x31\xFF\xB8\x3C\x00\x00\x00\x0F"   \
-  "\x05";
-
 #define PAYLOAD_LEN 570
 #define MAX_SIZE 2147483648 // 2Gb
 
@@ -86,10 +81,10 @@ void check_elf_size(uint8_t *origin_file, size_t origin_len);
 
 // get_data_origin_file.c
 void get_elf64_data(t_woody *woody, void *origin_file, ssize_t origin_len);
-void get_elf64_header(t_woody *woody, void *origin_file);
-void get_elf64_pheader(t_woody *woody, void *origin_file);
-void get_elf64_sheader(t_woody *woody, void *origin_file);
-void get_text_section(t_woody *woody, void *origin_file);
+void get_elf64_header(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_elf64_pheader(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_elf64_sheader(t_woody *woody, void *origin_file, ssize_t origin_len);
+void get_text_section(t_woody *woody, void *origin_file, ssize_t origin_len);
 void get_origin_entry_point(t_woody *woody);
 Elf64_Addr get_max_add(t_woody *woody);
 void calculate_my_size_file(t_woody *woody, ssize_t origin_len);
@@ -116,7 +111,7 @@ Elf32_Addr get_max_vaddr_32(t_woody_32 *woody);
 // error.c
 void launch_error(char *msg, void *file, size_t file_len);
 void launch_headers_error(char *msg, t_woody *woody, void *file,
-                          size_t file_len);
+                          ssize_t file_len);
 
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
