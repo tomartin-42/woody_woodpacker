@@ -12,6 +12,16 @@ static void init_t_woody(t_woody *woody) {
   woody = NULL;
 }
 
+static void init_t_woody_32(t_woody_32 *woody) {
+  woody->header = NULL;
+  woody->p_header = NULL;
+  woody->s_header = NULL;
+  woody->my_Pheader = NULL;
+  woody->file = NULL;
+  woody->key = NULL;
+  woody = NULL;
+}
+
 static uint8_t get_key_size(int argc, char **argv) {
   if (argc == 2) {
     return (64);
@@ -99,6 +109,7 @@ int main(int argc, char **argv) {
     /* } else if (check == ELFCLASS32) { */
     // elf32_worker
     woody_32 = (t_woody_32 *)malloc(sizeof(t_woody_32));
+    init_t_woody_32(woody_32);
     ft_bzero(&woody_32->key_size, 8);
     woody_32->key_size = get_key_size_32(argc, argv);
     get_elf32_data(woody_32, origin_file, origin_len);

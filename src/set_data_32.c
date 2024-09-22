@@ -116,11 +116,6 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
 }
 
 void patch_data_32(t_woody_32 *woody, ssize_t count) {
-  // char *tmp = woody->key;
-  printf("entry_distance: 0x%lx\n", woody->entry_distance);
-  printf("text_size: %x\n", (uint32_t)woody->text_size);
-  printf("text_dist: %lx\n", (unsigned long)woody->text_dist);
-  printf("key_size: %lx\n", (unsigned long)woody->key_size);
   ft_memcpy(((woody->file + count) - 5), (void *)&woody->entry_distance, 4);
   ft_memcpy(((woody->file + count) - 9), &woody->text_size, 4);
   ft_memcpy(((woody->file + count) - 13), &woody->text_dist, 4);

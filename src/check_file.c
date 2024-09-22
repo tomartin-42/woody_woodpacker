@@ -70,22 +70,22 @@ void check_elf_size_32(uint8_t *origin_file, size_t origin_len) {
   if (origin_len < sizeof(Elf32_Ehdr)) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
-  if (origin_file[H_SIZE] != sizeof(Elf32_Ehdr)) {
+  if (origin_file[H_SIZE_32] != sizeof(Elf32_Ehdr)) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
-  if ((int)origin_file[H_PH_SIZE] != sizeof(Elf32_Phdr)) {
+  if ((int)origin_file[H_PH_SIZE_32] != sizeof(Elf32_Phdr)) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
-  if ((int)origin_file[H_SH_SIZE] != sizeof(Elf32_Shdr)) {
+  if ((int)origin_file[H_SH_SIZE_32] != sizeof(Elf32_Shdr)) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
   if (origin_file[H_SH_OFF] +
-          (origin_file[H_SH_COUNT] * origin_file[H_SH_SIZE]) >
+          (origin_file[H_SH_COUNT_32] * origin_file[H_SH_SIZE_32]) >
       (int)origin_len) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }
-  if (origin_file[H_PH_OFF] +
-          (origin_file[H_PH_COUNT] * origin_file[H_PH_SIZE]) >
+  if (origin_file[H_PH_OFF_32] +
+          (origin_file[H_PH_COUNT_32] * origin_file[H_PH_SIZE_32]) >
       (int)origin_len) {
     launch_error(ELF_HEADER_ERROR, origin_file, origin_len);
   }

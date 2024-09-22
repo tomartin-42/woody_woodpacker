@@ -24,5 +24,6 @@ void put_file_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len) {
   // {
   //   launch_error(WRITE_FAIL, origin_file, origin_len);
   // }
+  clean_up_32(woody, origin_file, origin_len);
   close(fd);
 }

@@ -37,13 +37,13 @@
 
 // ELF HEADER 32
 #define H_TYPE_32 16     // header type
-#define H_SIZE_32 52     // header size
-#define H_PH_OFF_32 32   // program header table offset
-#define H_SH_OFF_32 40   // secction header table offset
-#define H_PH_SIZE_32 54  // program header table entry size
-#define H_PH_COUNT_32 56 // program header table entry count
-#define H_SH_SIZE_32 58  // secction header table entry size
-#define H_SH_COUNT_32 60 // secction header table entry count
+#define H_SIZE_32 40     // header size
+#define H_PH_OFF_32 28   // program header table offset
+#define H_SH_OFF_32 32   // secction header table offset
+#define H_PH_SIZE_32 42  // program header table entry size
+#define H_PH_COUNT_32 44 // program header table entry count
+#define H_SH_SIZE_32 46  // secction header table entry size
+#define H_SH_COUNT_32 48 // secction header table entry count
 
 typedef struct s_woody {
   Elf64_Ehdr *header;
@@ -159,7 +159,9 @@ void put_file_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
 void free_origin_file(void *origin_file, ssize_t origin_len);
 void free_woody_file(void *file);
 void free_pheaders(Elf64_Phdr *p_header);
+void free_pheaders_32(Elf32_Phdr *p_header);
 void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
+void clean_up_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
 void free_woody_struct(t_woody *woody);
 
 // encrypt.c
