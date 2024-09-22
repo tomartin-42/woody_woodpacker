@@ -95,7 +95,6 @@ int main(int argc, char **argv) {
   check = main_checker(origin_file, origin_len);
 
   /* <<<<<<< HEAD */
-  /* if (check == ELFCLASS64) { */
   if (check == 64) {
     // elf64_worker
     woody = (t_woody *)malloc(sizeof(t_woody));
@@ -106,7 +105,6 @@ int main(int argc, char **argv) {
     main_set_data(woody, origin_file, origin_len);
     put_file(woody, origin_file, origin_len);
   } else if (check == 32) {
-    /* } else if (check == ELFCLASS32) { */
     // elf32_worker
     woody_32 = (t_woody_32 *)malloc(sizeof(t_woody_32));
     init_t_woody_32(woody_32);

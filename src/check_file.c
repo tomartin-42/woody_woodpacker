@@ -12,8 +12,6 @@ static int get_elf_type_bits(uint8_t *origin_file) {
 
 int main_checker(uint8_t *origin_file, size_t origin_len) {
   int type; // 64bits or 32bits
-  printf("HED64 %ld\n", sizeof(Elf64_Ehdr));
-  printf("HED32 %ld\n", sizeof(Elf32_Ehdr));
   check_origin_elf(origin_file, origin_len);
   type = get_elf_type_bits(origin_file);
   if (type == 64) {

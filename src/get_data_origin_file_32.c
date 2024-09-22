@@ -5,7 +5,7 @@
 void get_elf32_data(t_woody_32 *woody, void *origin_file, ssize_t origin_len) {
   get_elf32_header(woody, origin_file);
   get_elf32_pheader(woody, origin_file);
-  get_elf32_sheader(woody, origin_file);
+  get_elf32_sheader(woody, origin_file, origin_len);
   get_origin_entry_point_32(woody);
   reserve_memory_to_my_file_32(woody, origin_file, origin_len);
 }
@@ -27,14 +27,21 @@ void get_elf32_pheader(t_woody_32 *woody, void *origin_file) {
   /* print_elf32_phdrs(woody->p_header, woody->header->e_phnum + 1); */
 }
 
-void get_elf32_sheader(t_woody_32 *woody, void *origin_file) {
-  char check = 0;
-
+// Copy Section_Headers
+void get_elf32_sheader(t_woody_32 *woody, void *origin_file,
+                       ssize_t origin_len) {
   woody->s_header =
       (Elf32_Shdr *)malloc((sizeof(Elf32_Shdr) * (woody->header->e_shnum)));
+  if (woody->s_header == NULL) {
+    launch_headers_error_32(MALLOC_FAIL, woody, origin_file, origin_len);
+  }
   ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
             sizeof(Elf32_Shdr) * (woody->header->e_shnum));
+}
 
+void get_text_section_32(t_woody_32 *woody, void *origin_file,
+                         ssize_t origin_len) {
+  char check = 0;
   const char *shstrtab =
       woody->s_header[woody->header->e_shstrndx].sh_offset + origin_file;
 
@@ -47,7 +54,7 @@ void get_elf32_sheader(t_woody_32 *woody, void *origin_file) {
     }
   }
   if (check == 0) {
-    // error not .text secction
+    launch_headers_error_32(NOT_TEXT_SECTION, woody, origin_file, origin_len);
     exit(42);
   }
 }

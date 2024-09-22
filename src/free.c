@@ -59,3 +59,27 @@ void free_woody_struct(t_woody *woody) {
     free(woody);
   }
 }
+
+void free_woody_struct_32(t_woody_32 *woody) {
+  if (woody->header != NULL) {
+    free(woody->header);
+  }
+  if (woody->p_header != NULL) {
+    free(woody->p_header);
+  }
+  if (woody->s_header != NULL) {
+    free(woody->s_header);
+  }
+  if (woody->my_Pheader != NULL) {
+    free(woody->my_Pheader);
+  }
+  if (woody->file != NULL) {
+    free(woody->file);
+  }
+  if (woody->key != NULL) {
+    free(woody->key);
+  }
+  if (woody != NULL) {
+    free(woody);
+  }
+}

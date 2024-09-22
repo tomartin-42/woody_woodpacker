@@ -17,3 +17,11 @@ void launch_headers_error(char *msg, t_woody *woody, void *file,
   free_woody_struct(woody);
   exit(42);
 }
+
+void launch_headers_error_32(char *msg, t_woody_32 *woody, void *file,
+                             ssize_t file_len) {
+  perror(msg);
+  munmap(file, file_len);
+  free_woody_struct_32(woody);
+  exit(42);
+}

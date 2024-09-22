@@ -109,7 +109,10 @@ Elf64_Addr get_max_vaddr(t_woody *woody);
 void get_elf32_data(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
 void get_elf32_header(t_woody_32 *woody, void *origin_file);
 void get_elf32_pheader(t_woody_32 *woody, void *origin_file);
-void get_elf32_sheader(t_woody_32 *woody, void *origin_file);
+void get_elf32_sheader(t_woody_32 *woody, void *origin_file,
+                       ssize_t origin_len);
+void get_text_section_32(t_woody_32 *woody, void *origin_file,
+                         ssize_t origin_len);
 void get_origin_entry_point_32(t_woody_32 *woody);
 Elf32_Addr get_max_add_32(t_woody_32 *woody);
 void calculate_my_size_file_32(t_woody_32 *woody, ssize_t origin_len);
@@ -123,6 +126,8 @@ Elf32_Addr get_max_vaddr_32(t_woody_32 *woody);
 void launch_error(char *msg, void *file, size_t file_len);
 void launch_headers_error(char *msg, t_woody *woody, void *file,
                           ssize_t file_len);
+void launch_headers_error_32(char *msg, t_woody_32 *woody, void *file,
+                             ssize_t file_len);
 
 // prints.c
 void print_elf_header(Elf64_Ehdr *header);
@@ -163,6 +168,7 @@ void free_pheaders_32(Elf32_Phdr *p_header);
 void clean_up(t_woody *woody, void *origin_file, ssize_t origin_len);
 void clean_up_32(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
 void free_woody_struct(t_woody *woody);
+void free_woody_struct_32(t_woody_32 *woody);
 
 // encrypt.c
 void main_encrypt(t_woody *woody);
