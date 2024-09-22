@@ -107,8 +107,9 @@ Elf64_Addr get_max_vaddr(t_woody *woody);
 
 // get_data_origin_file_32.c
 void get_elf32_data(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
-void get_elf32_header(t_woody_32 *woody, void *origin_file);
-void get_elf32_pheader(t_woody_32 *woody, void *origin_file);
+void get_elf32_header(t_woody_32 *woody, void *origin_file, ssize_t origin_len);
+void get_elf32_pheader(t_woody_32 *woody, void *origin_file,
+                       ssize_t origin_len);
 void get_elf32_sheader(t_woody_32 *woody, void *origin_file,
                        ssize_t origin_len);
 void get_text_section_32(t_woody_32 *woody, void *origin_file,
