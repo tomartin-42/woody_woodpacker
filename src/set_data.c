@@ -19,17 +19,13 @@ void main_set_data(t_woody *woody, void *origin_file, ssize_t origin_len) {
 
 void init_my_Pheader(t_woody *woody, ssize_t origin_len) {
   Elf64_Addr highest_vaddr = get_max_vaddr(woody);
-  // printf("HIGH vaddr: 0x%lx\n", highest_vaddr);
   Elf64_Addr highest_paddr = get_max_paddr(woody);
-  // printf("HIGH paddr: 0x%lx\n", highest_paddr);
 
   woody->padding = calculate_padding(woody, origin_len);
   woody->my_Pheader = (Elf64_Phdr *)malloc(sizeof(Elf64_Phdr));
   woody->my_Pheader->p_type = PT_LOAD;
   woody->my_Pheader->p_offset = (highest_paddr + 0xfff) & ~0xfff;
-  // printf("[!] Offset My New Section: 0x%lx\n", woody->my_Pheader->p_offset);
   woody->my_Pheader->p_vaddr = (highest_vaddr + 0xfff) & ~0xfff;
-  // printf("[!] V_addr My New Section: 0x%lx\n", woody->my_Pheader->p_vaddr);
   woody->my_Pheader->p_paddr = (highest_vaddr + 0xfff) & ~0xfff;
   woody->my_Pheader->p_filesz = 0x5000;
   woody->my_Pheader->p_memsz = 0x5000;
@@ -98,7 +94,6 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
 
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
   count += (sizeof(code) / sizeof(code[0]));
-  // count += PAYLOAD_LEN;
   // change entry
   Elf64_Ehdr *tmp = (Elf64_Ehdr *)woody->file;
   woody->origin_entry = tmp->e_entry;
@@ -106,18 +101,10 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
   // .text offset to decrypt.
   woody->text_dist = (woody->my_entry - woody->text_off);
-  // woody->file + cound = end_of_file
-  // Patch origin_entry to return addr
-  // printf("Origin entry: 0x%lx\n", woody->origin_entry);
-  /* printf("Entry distance: 0x%lx\n", woody->entry_distance); */
-  /* printf("Entry distance calculate: 0x%lx\n", */
-  /*        woody->my_entry - woody->entry_distance); */
   return (count);
 }
 
 void patch_data(t_woody *woody, ssize_t count) {
-  // char *tmp = woody->key;
-  printf("Entry distance: 0x%lx\n", woody->entry_distance);
   ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
   ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8);
   ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8);

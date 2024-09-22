@@ -94,7 +94,6 @@ int main(int argc, char **argv) {
 
   check = main_checker(origin_file, origin_len);
 
-  /* <<<<<<< HEAD */
   if (check == 64) {
     // elf64_worker
     woody = (t_woody *)malloc(sizeof(t_woody));
@@ -114,14 +113,4 @@ int main(int argc, char **argv) {
     main_set_data_32(woody_32, origin_file, origin_len);
     put_file_32(woody_32, origin_file, origin_len);
   }
-  /* ======= */
-  /*   woody = (t_woody *)malloc(sizeof(t_woody)); */
-  /*   init_t_woody(woody); */
-  /*   ft_bzero(&woody->key_size, 8); */
-  /*   woody->key_size = get_key_size(argc, argv); */
-  /**/
-  /*   get_elf64_data(woody, origin_file, origin_len); */
-  /*   main_set_data(woody, origin_file, origin_len); */
-  /*   put_file(woody, origin_file, origin_len); */
-  /* >>>>>>> 27f6c0427f3ec25d839ee0e6de26758ddd374ab3 */
 }

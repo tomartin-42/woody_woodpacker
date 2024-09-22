@@ -1,4 +1,3 @@
-// In this file going the print functions
 #include "../includes/woody.h"
 #include <elf.h>
 #include <stdint.h>

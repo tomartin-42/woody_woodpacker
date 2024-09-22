@@ -60,7 +60,7 @@ void get_text_section_32(t_woody_32 *woody, void *origin_file,
       break;
     }
   }
-  if (check == 0) {
+  if (check == 0) { // Not .text section
     launch_headers_error_32(NOT_TEXT_SECTION, woody, origin_file, origin_len);
     exit(42);
   }

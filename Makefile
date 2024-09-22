@@ -62,6 +62,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.asm
 $(NAME): $(OBJ) $(ASM_OBJ)
 	$(CC) $(OBJ) $(ASM_OBJ) $(CFLAGS) $(LNK) -o $@ $(FSANITIZER)
 
+bonus: all
 
 print:
 	@echo $(SRC)

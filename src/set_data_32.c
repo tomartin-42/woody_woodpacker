@@ -20,17 +20,13 @@ void main_set_data_32(t_woody_32 *woody, void *origin_file,
 
 void init_my_Pheader_32(t_woody_32 *woody, ssize_t origin_len) {
   Elf32_Addr highest_vaddr = get_max_vaddr_32(woody);
-  // printf("HIGH vaddr: 0x%lx\n", highest_vaddr);
   Elf32_Addr highest_paddr = get_max_paddr_32(woody);
-  // printf("HIGH paddr: 0x%lx\n", highest_paddr);
 
   woody->padding = calculate_padding_32(woody, origin_len);
   woody->my_Pheader = (Elf32_Phdr *)malloc(sizeof(Elf32_Phdr));
   woody->my_Pheader->p_type = PT_LOAD;
   woody->my_Pheader->p_offset = (highest_paddr + 0xfff) & ~0xfff;
-  // printf("[!] Offset My New Section: 0x%lx\n", woody->my_Pheader->p_offset);
   woody->my_Pheader->p_vaddr = (highest_vaddr + 0xfff) & ~0xfff;
-  // printf("[!] V_addr My New Section: 0x%lx\n", woody->my_Pheader->p_vaddr);
   woody->my_Pheader->p_paddr = (highest_vaddr + 0xfff) & ~0xfff;
   woody->my_Pheader->p_filesz = 0x5000;
   woody->my_Pheader->p_memsz = 0x5000;
@@ -93,25 +89,15 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
       "\x43\x43\x43\x43\x43\x43\x43\x5a\x5a\x5a\x5a\x4f\x4f\x4f\x4f\x53\x53\x53"
       "\x53\x44\x44\x44\x44";
 
-  // printf("init shellcode: 0x%lx\n", woody->my_entry);
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
   count += (sizeof(code) / sizeof(code[0]));
-  // count += PAYLOAD_LEN;
   // change entry
   Elf32_Ehdr *tmp = (Elf32_Ehdr *)woody->file;
   woody->origin_entry = tmp->e_entry;
   tmp->e_entry = woody->my_entry;
-  /* ft_bzero(&woody->entry_distance, 8); */
   woody->entry_distance = (woody->my_entry - woody->origin_entry);
   // .text offset to decrypt.
-  /* ft_bzero(&woody->text_dist, 8); */
   woody->text_dist = (woody->my_entry - woody->text_off);
-  // woody->file + cound = end_of_file
-  // Patch origin_entry to return addr
-  // printf("Origin entry: 0x%lx\n", woody->origin_entry);
-  /* printf("Entry distance: 0x%lx\n", woody->entry_distance); */
-  /* printf("Entry distance calculate: 0x%lx\n", */
-  /*        woody->my_entry - woody->entry_distance); */
   return (count);
 }
 

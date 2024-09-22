@@ -41,7 +41,6 @@ char *get_random_key(uint64_t key_size) {
       j = ft_atoi(c);
     }
     key[i] = j;
-    /* key[i] = 66; */
   }
   close(fd);
   return (key);
@@ -68,7 +67,6 @@ char *get_random_key_32(uint8_t key_size) {
       j = ft_atoi(c);
     }
     key[i] = j;
-    /* key[i] = 66; */
   }
   close(fd);
   return (key);
@@ -77,22 +75,13 @@ char *get_random_key_32(uint8_t key_size) {
 void encrypt_file(t_woody *woody) {
   Elf64_Off count = woody->text_off;
 
-  // printf("text_offset %10x\n", (int)woody->text_off);
-  // printf("text_offset + count %p\n", woody->file + count);
-  // printf("some bytes before %.20ld\n", *(Elf64_Off *)(woody->file + count));
-  // printf("text_size %10x\n", (int)woody->text_size);
-  // printf("key %.8s\n", woody->key);
   asm_encrypt(count + woody->file, woody->text_size, woody->key,
               woody->key_size);
 }
 
 void encrypt_file_32(t_woody_32 *woody) {
   Elf32_Off count = woody->text_off;
-  /* (void)woody; */
-  /* printf("text_offset + count %p\n", woody->file + count); */
-  /* printf("some bytes before %.20x\n", *(Elf32_Off *)(woody->file + count));
-   */
-  // printf("key %.8s\n", woody->key);
+
   asm_encrypt(count + woody->file, woody->text_size, woody->key,
               woody->key_size);
 }
