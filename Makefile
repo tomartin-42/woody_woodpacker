@@ -11,7 +11,7 @@ LNK = -L $(LIBFT_DIR) -lft
 SRC_DIR = ./src/
 OBJ_DIR = ./obj/
 INC_DIR = ./includes/
-INC = -I$(INC_DIR)
+IN = -I$(INC_DIR)
 
 ASM_FILES = asm_encrypt.asm
 ASM_SRC = $(addprefix $(SRC_DIR), $(ASM_FILES))
