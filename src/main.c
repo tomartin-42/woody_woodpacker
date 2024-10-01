@@ -58,6 +58,17 @@ static uint8_t get_key_size_32(int argc, char **argv) {
   return (32);
 }
 
+void dump(void *ptr, size_t size) {
+  printf("%p: ", ptr);
+  for (size_t i = 0; i < size; ++i) {
+    printf("%02hhx ", ((char *)ptr)[i]);
+    if (!(i % 16)) {
+      printf("\n");
+    }
+  }
+  printf("\n");
+}
+
 int main(int argc, char **argv) {
   int fd;
   void *origin_file;
@@ -98,7 +109,9 @@ int main(int argc, char **argv) {
     // elf64_worker
     woody = (t_woody *)malloc(sizeof(t_woody));
     init_t_woody(woody);
-    ft_bzero(&woody->key_size, 8);
+    dump(woody, sizeof(t_woody) + 20);
+    ft_bzero(&woody->key_size, 1);
+    dump(woody, sizeof(t_woody) + 20);
     woody->key_size = get_key_size(argc, argv);
     get_elf64_data(woody, origin_file, origin_len);
     main_set_data(woody, origin_file, origin_len);

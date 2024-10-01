@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PAYLOAD_LEN 570
+#define PAYLOAD_LEN 235
 #define MAX_SIZE 2147483648 // 2Gb
 
 // ERROS

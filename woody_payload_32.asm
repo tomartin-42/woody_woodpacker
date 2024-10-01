@@ -11,7 +11,7 @@ _start:
                 call $ + 5
                 pop esi
                 sub esi, 10
-                ;push esi                        ; save esi _start address
+                ;push esi                       ; save esi _start address
                 push edx                        ; save edx because write syscall change this reg
                 mov ecx, esi                    
                 add ecx, 105 
@@ -28,17 +28,13 @@ _start:
                 ; edx = key (puntero a la clave de cifrado)
                 ; ecx = key_size (tamaño de la clave)
                 ; ebx = conter
-                ; push eax                        ; save eax
-                ; push edx                        ; save edx
-                ; push ecx                        ; save ecx
-                ; push ebx
-                lea eax, [esi + 155]            ;; load .text distance in eax
+                lea eax, [esi + 155]            ; load .text distance in eax
                 mov edi, esi
                 sub edi, [eax]                  ; calculate .text section address
-                lea eax, [esi + 159]            ;; load in eax .text section size
+                lea eax, [esi + 159]            ; load in eax .text section size
                 mov eax, [eax]
                 lea edx, [esi + 119]            ; load in edx decrypt key
-                lea ecx, [esi + 151]            ;; load in edx key size
+                lea ecx, [esi + 151]            ; load in edx key size
                 mov ecx, [ecx]
                 xor ebx, ebx                    ; init to 0 ebx, use for conter
 
@@ -60,7 +56,7 @@ continuel_xor:
                 jnz xor_loop
         
 
-                lea eax, [esi + 163]            ;
+                lea eax, [esi + 163]            
                 sub esi, [eax]
                 pop edx
                 pop ecx

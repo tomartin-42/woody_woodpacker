@@ -26,7 +26,7 @@ char *get_random_key(uint64_t key_size) {
   char *key;
   int j = 0;
 
-  key = (char *)malloc(8);
+  key = (char *)malloc(key_size);
   fd = open("/dev/urandom", O_RDONLY);
   if (fd == -1) {
     launch_error(KEYGEN_FAIL, NULL, 0);
@@ -52,7 +52,7 @@ char *get_random_key_32(uint8_t key_size) {
   char *key;
   int j = 0;
 
-  key = (char *)malloc(8);
+  key = (char *)malloc(key_size);
   fd = open("/dev/urandom", O_RDONLY);
   if (fd == -1) {
     launch_error(KEYGEN_FAIL, NULL, 0);

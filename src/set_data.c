@@ -92,6 +92,7 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
       "\x4f\x4f\x53\x53\x53\x53\x53\x53\x53\x53\x44\x44\x44\x44\x44\x44\x44"
       "\x44";
 
+  printf("C + CODE: %zu\n", count + sizeof(code));
   ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
   count += (sizeof(code) / sizeof(code[0]));
   // change entry
@@ -105,11 +106,14 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
 }
 
 void patch_data(t_woody *woody, ssize_t count) {
-  ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
-  ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8);
-  ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8);
-  ft_memcpy(((woody->file + count) - 33), &woody->key_size, 8);
-  ft_memcpy(((woody->file + count) - 97), woody->key, woody->key_size);
+  (void)woody;
+  (void)count;
+  /* ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
+   */
+  /* ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8); */
+  /* ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8); */
+  /* ft_memcpy(((woody->file + count) - 33), &woody->key_size, 8); */
+  /* ft_memcpy(((woody->file + count) - 97), woody->key, woody->key_size); */
 }
 
 // Found and change section p_flags to can encrypt/decrypt .text secction
