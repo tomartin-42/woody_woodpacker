@@ -110,13 +110,12 @@ void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
   size += PAYLOAD_LEN;
 
   woody->file_size = size;
-  printf("SIZE %zu\n", size);
 }
 
 void reserve_memory_to_my_file(t_woody *woody, void *origin_file,
                                ssize_t origin_len) {
   calculate_my_size_file(woody, origin_len);
-  woody->file = malloc(woody->file_size);
+  woody->file = malloc(woody->file_size + 1);
   if (woody->file == NULL) {
     launch_headers_error(MALLOC_FAIL, woody, origin_file, origin_len);
   }

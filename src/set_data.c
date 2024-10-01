@@ -106,14 +106,11 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
 }
 
 void patch_data(t_woody *woody, ssize_t count) {
-  (void)woody;
-  (void)count;
-  /* ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
-   */
-  /* ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8); */
-  /* ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8); */
-  /* ft_memcpy(((woody->file + count) - 33), &woody->key_size, 8); */
-  /* ft_memcpy(((woody->file + count) - 97), woody->key, woody->key_size); */
+  ft_memcpy(((woody->file + count) - 9), (void *)&woody->entry_distance, 8);
+  ft_memcpy(((woody->file + count) - 17), &woody->text_size, 8);
+  ft_memcpy(((woody->file + count) - 25), &woody->text_dist, 8);
+  ft_memcpy(((woody->file + count) - 33), &woody->key_size, 8);
+  ft_memcpy(((woody->file + count) - 97), woody->key, woody->key_size);
 }
 
 // Found and change section p_flags to can encrypt/decrypt .text secction

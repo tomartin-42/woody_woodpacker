@@ -18,7 +18,7 @@ void get_elf32_header(t_woody_32 *woody, void *origin_file,
   if (woody->header == NULL) {
     launch_headers_error_32(MALLOC_FAIL, woody, origin_file, origin_len);
   }
-  ft_memcpy(woody->header, origin_file, sizeof(Elf64_Ehdr));
+  ft_memcpy(woody->header, origin_file, sizeof(Elf32_Ehdr));
 }
 
 // Copy Program_Headers
@@ -31,7 +31,7 @@ void get_elf32_pheader(t_woody_32 *woody, void *origin_file,
     launch_headers_error_32(MALLOC_FAIL, woody, origin_file, origin_len);
   }
   ft_memcpy(woody->p_header, woody->header->e_phoff + origin_file,
-            sizeof(Elf64_Phdr) * (woody->header->e_phnum + 1));
+            sizeof(Elf32_Phdr) * (woody->header->e_phnum + 1));
 }
 
 // Copy Section_Headers
@@ -43,7 +43,7 @@ void get_elf32_sheader(t_woody_32 *woody, void *origin_file,
     launch_headers_error_32(MALLOC_FAIL, woody, origin_file, origin_len);
   }
   ft_memcpy(woody->s_header, woody->header->e_shoff + origin_file,
-            sizeof(Elf64_Shdr) * (woody->header->e_shnum));
+            sizeof(Elf32_Shdr) * (woody->header->e_shnum));
 }
 
 void get_text_section_32(t_woody_32 *woody, void *origin_file,
@@ -111,7 +111,7 @@ void calculate_my_size_file_32(t_woody_32 *woody, ssize_t origin_len) {
   size += padding;
   size += ((woody->header->e_phnum + 1) *
            (woody->header->e_phentsize)); // p_header leng
-  size += PAYLOAD_LEN;
+  size += PAYLOAD_LEN_32;
 
   woody->file_size = size;
 }
@@ -119,7 +119,7 @@ void calculate_my_size_file_32(t_woody_32 *woody, ssize_t origin_len) {
 void reserve_memory_to_my_file_32(t_woody_32 *woody, void *origin_file,
                                   ssize_t origin_len) {
   calculate_my_size_file_32(woody, origin_len);
-  woody->file = malloc(woody->file_size);
+  woody->file = malloc(woody->file_size + 1);
   if (woody->file == NULL) {
     launch_headers_error_32(MALLOC_FAIL, woody, origin_file, origin_len);
   }

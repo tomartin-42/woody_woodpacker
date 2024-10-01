@@ -13,7 +13,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PAYLOAD_LEN 235
+#define PAYLOAD_LEN 234
+#define PAYLOAD_LEN_32 167
 #define MAX_SIZE 2147483648 // 2Gb
 
 // ERROS
@@ -61,7 +62,7 @@ typedef struct s_woody {
   Elf64_Off test; // test .text offset
   uint64_t text_size;
   Elf64_Addr text_dist;
-  uint8_t key_size;
+  long key_size;
 } t_woody;
 
 typedef struct s_woody_32 {
@@ -80,7 +81,7 @@ typedef struct s_woody_32 {
   Elf32_Off test; // test .text offset
   uint32_t text_size;
   Elf32_Addr text_dist;
-  uint8_t key_size;
+  long key_size;
 } t_woody_32;
 
 // check_file.c
