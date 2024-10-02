@@ -92,8 +92,7 @@ ssize_t put_data_in_buffer(t_woody *woody, void *origin_file,
       "\x4f\x4f\x53\x53\x53\x53\x53\x53\x53\x53\x44\x44\x44\x44\x44\x44\x44"
       "\x44";
 
-  printf("C + CODE: %zu\n", count + sizeof(code));
-  ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
+  ft_memcpy(woody->file + count, code, sizeof(code));
   count += (sizeof(code) / sizeof(code[0]));
   // change entry
   Elf64_Ehdr *tmp = (Elf64_Ehdr *)woody->file;

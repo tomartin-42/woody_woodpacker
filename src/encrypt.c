@@ -22,7 +22,7 @@ void main_encrypt_32(t_woody_32 *woody) {
 
 char *get_random_key(uint64_t key_size) {
   int fd;
-  char c[2] = {0, 0};
+  char c[3] = {0, 0, 0};
   char *key;
   int j = 0;
 
@@ -35,7 +35,7 @@ char *get_random_key(uint64_t key_size) {
   for (uint8_t i = 0; i < key_size; i++) {
     j = 0;
     while (j < 33 || j > 126) {
-      if (read(fd, c, 2) == -1) {
+      if (read(fd, c, 3) == -1) {
         launch_error(KEYGEN_FAIL, NULL, 0);
       }
       j = ft_atoi(c);
@@ -48,7 +48,7 @@ char *get_random_key(uint64_t key_size) {
 
 char *get_random_key_32(uint8_t key_size) {
   int fd;
-  char c[2] = {0, 0};
+  char c[3] = {0, 0, 0};
   char *key;
   int j = 0;
 
@@ -61,7 +61,7 @@ char *get_random_key_32(uint8_t key_size) {
   for (uint8_t i = 0; i < key_size; i++) {
     j = 0;
     while (j < 33 || j > 126) {
-      if (read(fd, c, 2) == -1) {
+      if (read(fd, c, 3) == -1) {
         launch_error(KEYGEN_FAIL, NULL, 0);
       }
       j = ft_atoi(c);

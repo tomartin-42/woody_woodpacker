@@ -89,7 +89,7 @@ ssize_t put_data_in_buffer_32(t_woody_32 *woody, void *origin_file,
       "\x43\x43\x43\x43\x43\x43\x43\x5a\x5a\x5a\x5a\x4f\x4f\x4f\x4f\x53\x53\x53"
       "\x53\x44\x44\x44\x44";
 
-  ft_memcpy(woody->file + count, code, (sizeof(code) / sizeof(code[0])));
+  ft_memcpy(woody->file + count, code, (sizeof(code)));
   count += (sizeof(code) / sizeof(code[0]));
   // change entry
   Elf32_Ehdr *tmp = (Elf32_Ehdr *)woody->file;
