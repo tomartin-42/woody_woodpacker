@@ -45,7 +45,6 @@ all: obj $(LIBFT) $(NAME)
 	 @echo " ██║     ██║  ██║╚██████╗██║  ██╗███████╗██║  ██║"
 	 @echo " ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
 	 @echo "By tomartin in 42Madrid"
-	rm -Rf woody
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)	
