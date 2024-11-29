@@ -59,7 +59,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.asm
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
 $(NAME): $(OBJ) $(ASM_OBJ)
-	$(CC) $(OBJ) $(ASM_OBJ) $(CFLAGS) $(LNK) -o $@ $(FSANITIZER)
+	$(CC) $(OBJ) $(ASM_OBJ) $(CFLAGS) $(LNK) -o $@ 
 
 bonus: all
 

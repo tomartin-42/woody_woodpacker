@@ -94,7 +94,10 @@ Elf64_Addr get_max_vaddr(t_woody *woody) {
 unsigned int calculate_padding(t_woody *woody, ssize_t origin_len) {
   Elf64_Addr highest_paddr = get_max_paddr(woody);
 
-  unsigned int padding = ((highest_paddr + 0xfff) & ~0xfff) - origin_len;
+  unsigned int padding = ((((highest_paddr +0x1000) + 0xfff) & ~0xfff) - origin_len);
+  printf("Padding: %d\n", padding);
+  printf("H_addr: %ld\n", highest_paddr);
+  printf("Size: %ld\n", origin_len);
   return (padding);
 }
 
@@ -104,7 +107,7 @@ void calculate_my_size_file(t_woody *woody, ssize_t origin_len) {
   woody->padding = padding;
 
   size += origin_len; // Origin file leng
-  size += padding;
+  size += woody->padding;
   size += ((woody->header->e_phnum + 1) *
            (woody->header->e_phentsize)); // p_header leng
   size += PAYLOAD_LEN;

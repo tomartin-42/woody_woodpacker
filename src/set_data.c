@@ -21,12 +21,13 @@ void init_my_Pheader(t_woody *woody, ssize_t origin_len) {
   Elf64_Addr highest_vaddr = get_max_vaddr(woody);
   Elf64_Addr highest_paddr = get_max_paddr(woody);
 
-  woody->padding = calculate_padding(woody, origin_len);
+  /* woody->padding = calculate_padding(woody, origin_len); */
+  origin_len = origin_len;
   woody->my_Pheader = (Elf64_Phdr *)malloc(sizeof(Elf64_Phdr));
   woody->my_Pheader->p_type = PT_LOAD;
-  woody->my_Pheader->p_offset = (highest_paddr + 0xfff) & ~0xfff;
-  woody->my_Pheader->p_vaddr = (highest_vaddr + 0xfff) & ~0xfff;
-  woody->my_Pheader->p_paddr = (highest_vaddr + 0xfff) & ~0xfff;
+  woody->my_Pheader->p_offset = ((highest_paddr + 0xfff) + 0x1000) & ~0xfff;
+  woody->my_Pheader->p_vaddr = ((highest_vaddr + 0xfff) + 0x1000) & ~0xfff;
+  woody->my_Pheader->p_paddr = ((highest_vaddr + 0xfff) + 0x1000) & ~0xfff;
   woody->my_Pheader->p_filesz = 0x5000;
   woody->my_Pheader->p_memsz = 0x5000;
   woody->my_Pheader->p_flags = PF_X | PF_W | PF_R;
@@ -42,7 +43,8 @@ void mod_origin_header(t_woody *woody, void *origin_file) {
 
 void mod_phdr(t_woody *woody, ssize_t origin_len) {
 
-  woody->padding = calculate_padding(woody, origin_len);
+  /* woody->padding = calculate_padding(woody, origin_len); */
+  origin_len = origin_len;
   for (int i = 0; i < woody->header->e_phnum; i++) {
     if (woody->p_header[i].p_type == PT_PHDR) {
       woody->p_header[i].p_offset = woody->my_Pheader->p_offset;
