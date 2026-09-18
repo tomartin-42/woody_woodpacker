@@ -1,11 +1,10 @@
+#include <elf.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>   
-#include <unistd.h> 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <errno.h>
 #include <sys/mman.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 // Validador flag de parametro de encriptación
 static int validate_second_arg(char **argv) {
@@ -13,8 +12,8 @@ static int validate_second_arg(char **argv) {
 
   flag_value = atoi(&argv[2][1]);
 
-  if (flag_value != 8 && flag_value != 16 
-      && flag_value != 32 && flag_value != 64) {
+  if (flag_value != 8 && flag_value != 16 && flag_value != 32 &&
+      flag_value != 64) {
     flag_value = 0;
   }
   return flag_value;
@@ -22,20 +21,22 @@ static int validate_second_arg(char **argv) {
 
 int main(int argc, char **argv) {
 
-  void *origin_file; 
-  ssize_t origin_len;
+  void *origin_file = NULL;
+  off_t origin_len;
   int fd;
-  
+
   // Comprobaciones
   if (argc < 2 || argc > 3) {
     write(2, "Error: Invalid option format\n", 29);
-    write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n", 63);
+    write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
+          63);
     exit(EXIT_FAILURE);
   }
 
   if (argc == 3 && (argv[2][0] != '-' || !validate_second_arg(argv))) {
     write(2, "Error: Invalid option format\n", 29);
-    write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n", 63);
+    write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
+          63);
     exit(EXIT_FAILURE);
   }
 
@@ -52,6 +53,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  // Comprobación para que el archivo original tenga garantizado
+  // como tamáño mínimo una cabecera Elf64 y no de fallo al intentar
+  // leer la cabecera.
+  if (origin_len < (off_t)sizeof(Elf64_Ehdr)) {
+    write(2, "Error: Invalid file size\n", 25);
+    close(fd);
+    exit(EXIT_FAILURE);
+  }
+
+  // Mapeo del archivo original al buffer origin_file
+  // No se ve afectado el archivo original por la flag MAP_PRIVATE
   origin_file =
       mmap(NULL, origin_len, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 
@@ -60,5 +72,6 @@ int main(int argc, char **argv) {
     perror("mmap() error");
     exit(EXIT_FAILURE);
   }
+
   close(fd);
 }

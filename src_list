@@ -1,1 +1,1 @@
-SRC_FILES = main.c
+SRC_FILES = main.c validator.c

@@ -1,0 +1,440 @@
+[
+  {
+    "file": "ft_memset.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memset.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_bzero.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_bzero.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_memcpy.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memcpy.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_memccpy.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memccpy.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_memmove.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memmove.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_memchr.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memchr.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_memcmp.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_memcmp.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strlen.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strlen.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strdup.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strdup.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strlcpy.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strlcpy.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strlcat.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strlcat.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strchr.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strchr.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strrchr.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strrchr.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strnstr.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strnstr.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strncmp.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strncmp.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_atoi.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_atoi.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_isalpha.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_isalpha.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_isdigit.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_isdigit.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_isalnum.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_isalnum.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_isascii.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_isascii.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_isprint.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_isprint.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_toupper.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_toupper.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_tolower.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_tolower.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_calloc.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_calloc.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_substr.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_substr.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strjoin.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strjoin.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strtrim.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strtrim.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_split.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_split.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_itoa.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_itoa.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_strmapi.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_strmapi.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_putchar_fd.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_putchar_fd.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_putstr_fd.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_putstr_fd.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_putendl_fd.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_putendl_fd.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "ft_putnbr_fd.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-c",
+      "ft_putnbr_fd.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker/libft42"
+  },
+  {
+    "file": "src/main.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Werror",
+      "-Wextra",
+      "-g",
+      "-I./libft42/",
+      "-o",
+      "obj/main.o",
+      "-c",
+      "src/main.c"
+    ],
+    "directory": "/home/tommy/woody_woodpacker",
+    "output": "obj/main.o"
+  },
+  {
+    "file": "src/asm_encrypt.asm",
+    "arguments": [
+      "/usr/bin/nasm",
+      "-f",
+      "elf64",
+      "-o",
+      "obj/asm_encrypt.o",
+      "src/asm_encrypt.asm"
+    ],
+    "directory": "/home/tommy/woody_woodpacker",
+    "output": "obj/asm_encrypt.o"
+  }
+]
