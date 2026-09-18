@@ -1,3 +1,5 @@
+#include <stddef.h>
+#include <stdint.h>
 #ifndef WOODY_H
 #define WOODY_H
 
@@ -16,4 +18,7 @@ typedef struct s_elf_info {
   uint64_t text_size;
   uint64_t max_load_end;
 } t_elf_info;
+
+int validate_elf(void *file, size_t file_size, t_elf_info *info);
+
 #endif // DEBUG
