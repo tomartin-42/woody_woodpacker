@@ -50,9 +50,8 @@ static int validate_elf64(const unsigned char *original_file,
     return (0);
   }
 
-  // Comprobación de que es tipo ejecutable.
-  // Las librerias dinámicas (ET_DYN) tambien se consideran ejecutables
-  if (ehdr->e_type != ET_EXEC || ehdr->e_type == ET_DYN) {
+  // Comprueba que sea un ejecutable ET_EXEC o ET_DYN, formato usado por PIE
+  if (ehdr->e_type != ET_EXEC && ehdr->e_type != ET_DYN) {
     return (0);
   }
 
@@ -68,6 +67,25 @@ static int validate_elf64(const unsigned char *original_file,
     return (0);
   }
 
+  // Comprueba que la tabla de Program Headers tenga entradas
+  if (!(ehdr->e_phnum > 0)) {
+    return (0);
+  }
+
+  // Comprueba la integridad del tamaño de la entradas a la tabla de Elf64_Phdr
+  if (ehdr->e_phentsize != sizeof(Elf64_Phdr)) {
+    return (0);
+  }
+
+  // Rechaza la numeración extendida de las tablas, todavía no soportada
+  if (ehdr->e_phnum == PN_XNUM || ehdr->e_shstrndx == SHN_XINDEX) {
+    return (0);
+  }
+
+  // Comprueba que haya Section Headers para poder localizar la sección .text
+  if (ehdr->e_shnum == 0) {
+    return (0);
+  }
   return (1);
 }
 static int validate_elf32(const unsigned char *original_file,
