@@ -1,7 +1,8 @@
 #include "../includes/woody.h"
 #include <elf.h>
 
-static int range_is_valid(size_t file_size, uint64_t offset, uint64_t size) {
+// Comprueba que el segmento está dentro del archivo
+static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   if (offset > file_size)
     return (0);
   if (size > file_size - offset)
@@ -108,8 +109,26 @@ static int validate_elf64(const unsigned char *original_file,
       continue;
 
     // Comprueba que los datos descritos por la entrada estén dentro del archivo
-    if (!range_is_valid(original_len, phdr->p_offset, phdr->p_filesz)) {
+    if (!range_is_valid_64(original_len, phdr->p_offset, phdr->p_filesz)) {
       return (0);
+    }
+
+    // Comprobaciones para segmentos de tipo PT_LOAD
+    if (phdr->p_type == PT_LOAD) {
+      // Tamaño en memoria debe de ser = o > que en fichero
+      if (phdr->p_filesz > phdr->p_memsz)
+        return (0);
+
+      // Tiene una virtual addres correcta y dentro de rango
+      if (phdr->p_vaddr > UINT64_MAX - phdr->p_memsz)
+        return (0);
+
+      // Comprobación de alineación
+      if (phdr->p_align > 1 &&
+          ((phdr->p_align & (phdr->p_align - 1)) != 0 ||
+           phdr->p_offset % phdr->p_align != phdr->p_vaddr % phdr->p_align)) {
+        return (0);
+      }
     }
   }
 
@@ -124,12 +143,16 @@ static int validate_elf32(const unsigned char *original_file,
 int validate_elf(const unsigned char *original_file, size_t original_len,
                  t_elf_info *elf_info) {
   if (!validate_ident(original_file, original_len)) {
-    return (-1);
+    return (0);
   }
   if (original_file[EI_CLASS] == ELFCLASS64) {
-    validate_elf64(original_file, original_len, elf_info);
+    if (!validate_elf64(original_file, original_len, elf_info)) {
+      return (0);
+    }
   } else {
-    validate_elf32(original_file, original_len, elf_info);
+    if (!validate_elf32(original_file, original_len, elf_info)) {
+      return (0);
+    }
   }
-  return (0);
+  return (1);
 }
