@@ -56,9 +56,9 @@ int main(int argc, char **argv) {
   }
 
   // Comprobación para que el archivo original tenga garantizado
-  // como tamáño mínimo una cabecera Elf64 y no de fallo al intentar
+  // como tamáño mínimo una cabecera Elf32 y no de fallo al intentar
   // leer la cabecera.
-  if (origin_len < (off_t)sizeof(Elf64_Ehdr)) {
+  if (origin_len < (off_t)sizeof(Elf32_Ehdr)) {
     write(2, "Error: Invalid file size\n", 25);
     close(fd);
     exit(EXIT_FAILURE);
