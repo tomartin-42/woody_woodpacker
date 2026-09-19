@@ -2,17 +2,15 @@
 #include <elf.h>
 
 static int validate_ident(const unsigned char *original_file,
-                           size_t original_len) {
+                          size_t original_len) {
   // Comprueba que se pueda leer la identificación completa del ELF
   if (original_file == NULL || original_len < EI_NIDENT) {
     return (0);
   }
 
   // Comprueba los bytes mágicos que identifican un archivo ELF
-  if (original_file[EI_MAG0] != ELFMAG0 ||
-      original_file[EI_MAG1] != ELFMAG1 ||
-      original_file[EI_MAG2] != ELFMAG2 ||
-      original_file[EI_MAG3] != ELFMAG3) {
+  if (original_file[EI_MAG0] != ELFMAG0 || original_file[EI_MAG1] != ELFMAG1 ||
+      original_file[EI_MAG2] != ELFMAG2 || original_file[EI_MAG3] != ELFMAG3) {
     return (0);
   }
 
@@ -36,21 +34,29 @@ static int validate_ident(const unsigned char *original_file,
 
   return (1);
 }
-static int validate_elf65(void *original_file, size_t original_len,
-                          t_elf_info *elf_info) {
-  return (0);
+
+static int validate_elf64(const unsigned char *original_file,
+                          size_t original_len, t_elf_info *elf_info) {
+  if (original_len < sizeof(Elf64_Ehdr)) {
+    return (0);
+  }
+
+  return (1);
 }
-static int validate_elf32(void *original_file, size_t original_len,
-                          t_elf_info *elf_info) {
+static int validate_elf32(const unsigned char *original_file,
+                          size_t original_len, t_elf_info *elf_info) {
   return (0);
 }
 
-int validate_elf(void *original_file, size_t original_len,
+int validate_elf(const unsigned char *original_file, size_t original_len,
                  t_elf_info *elf_info) {
   if (!validate_ident(original_file, original_len)) {
     return (-1);
   }
-  validate_elf65(original_file, original_len, elf_info);
-  validate_elf32(original_file, original_len, elf_info);
+  if (original_file[EI_CLASS] == ELFCLASS64) {
+    validate_elf64(original_file, original_len, elf_info);
+  } else {
+    validate_elf32(original_file, original_len, elf_info);
+  }
   return (0);
 }

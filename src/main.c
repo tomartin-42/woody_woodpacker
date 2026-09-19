@@ -22,10 +22,10 @@ static int validate_second_arg(char **argv) {
 
 int main(int argc, char **argv) {
 
-  void *origin_file = NULL;
+  unsigned char *origin_file = NULL;
   off_t origin_len;
   int fd;
-  struct s_elf_info *elf_info = {0};
+  struct s_elf_info elf_info = {0};
 
   // Comprobaciones
   if (argc < 2 || argc > 3) {
@@ -77,5 +77,5 @@ int main(int argc, char **argv) {
 
   close(fd);
 
-  validate_elf(origin_file, origin_len, elf_info);
+  validate_elf(origin_file, origin_len, &elf_info);
 }

@@ -19,6 +19,6 @@ typedef struct s_elf_info {
   uint64_t max_load_end;
 } t_elf_info;
 
-int validate_elf(void *file, size_t file_size, t_elf_info *info);
+int validate_elf(const unsigned char *file, size_t file_size, t_elf_info *info);
 
 #endif // DEBUG
