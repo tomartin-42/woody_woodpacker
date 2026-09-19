@@ -1,6 +1,14 @@
 #include "../includes/woody.h"
 #include <elf.h>
 
+static int range_is_valid(size_t file_size, uint64_t offset, uint64_t size) {
+  if (offset > file_size)
+    return (0);
+  if (size > file_size - offset)
+    return (0);
+  return (1);
+}
+
 static int validate_ident(const unsigned char *original_file,
                           size_t original_len) {
   // Comprueba que se pueda leer la identificación completa del ELF
@@ -44,50 +52,70 @@ static int validate_elf64(const unsigned char *original_file,
   if (original_file == NULL || original_len < sizeof(Elf64_Ehdr)) {
     return (0);
   }
-
   // Comprobación que el archivo es de arquitectura Intel 64
   if (ehdr->e_machine != EM_X86_64) {
     return (0);
   }
-
   // Comprueba que sea un ejecutable ET_EXEC o ET_DYN, formato usado por PIE
   if (ehdr->e_type != ET_EXEC && ehdr->e_type != ET_DYN) {
     return (0);
   }
-
   // Comprueba la version del ELF
   // EV_CURRENT = versión válida
   if (ehdr->e_version != EV_CURRENT) {
     return (0);
   }
-
   // Comprueba que el tamaño del Elf64_Ehdr es consistente con lo indicado por
   // e_ehsize
   if (ehdr->e_ehsize != sizeof(Elf64_Ehdr)) {
     return (0);
   }
-
   // Comprueba que la tabla de Program Headers tenga entradas
   if (!(ehdr->e_phnum > 0)) {
     return (0);
   }
-
   // Comprueba la integridad del tamaño de la entradas a la tabla de Elf64_Phdr
   if (ehdr->e_phentsize != sizeof(Elf64_Phdr)) {
     return (0);
   }
-
   // Rechaza la numeración extendida de las tablas, todavía no soportada
   if (ehdr->e_phnum == PN_XNUM || ehdr->e_shstrndx == SHN_XINDEX) {
     return (0);
   }
-
   // Comprueba que haya Section Headers para poder localizar la sección .text
   if (ehdr->e_shnum == 0) {
     return (0);
   }
+
+  // -------------------------------------------
+  // Validación de los Program Headers
+  // -------------------------------------------
+
+  // Comprueba que la tabla esté dentro del archivo y que todas sus entradas
+  // quepan en el buffer original
+  if (ehdr->e_phoff > original_len ||
+      ehdr->e_phnum > (original_len - ehdr->e_phoff) / sizeof(Elf64_Phdr)) {
+    return (0);
+  }
+
+  const Elf64_Phdr *phdrs;
+  phdrs = (const Elf64_Phdr *)(original_file + ehdr->e_phoff);
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    const Elf64_Phdr *phdr = &phdrs[i];
+
+    // Ignora las entradas no utilizadas de la tabla
+    if (phdr->p_type == PT_NULL)
+      continue;
+
+    // Comprueba que los datos descritos por la entrada estén dentro del archivo
+    if (!range_is_valid(original_len, phdr->p_offset, phdr->p_filesz)) {
+      return (0);
+    }
+  }
+
   return (1);
 }
+
 static int validate_elf32(const unsigned char *original_file,
                           size_t original_len, t_elf_info *elf_info) {
   return (0);
