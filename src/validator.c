@@ -10,6 +10,62 @@ static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   return (1);
 }
 
+static int validate_phdr64(const unsigned char *original_file,
+                           size_t original_len, const Elf64_Ehdr *ehdr) {
+  const Elf64_Phdr *phdrs;
+  int pt_load_exits = 0;
+
+  phdrs = (const Elf64_Phdr *)(original_file + ehdr->e_phoff);
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    const Elf64_Phdr *phdr = &phdrs[i];
+
+    // Ignora las entradas no utilizadas de la tabla
+    if (phdr->p_type == PT_NULL)
+      continue;
+
+    // Comprueba que los datos descritos por la entrada estén dentro del archivo
+    if (!range_is_valid_64(original_len, phdr->p_offset, phdr->p_filesz)) {
+      return (0);
+    }
+
+    // Comprobaciones para segmentos de tipo PT_LOAD
+    if (phdr->p_type == PT_LOAD) {
+      pt_load_exits++;
+      // Tamaño en memoria debe de ser = o > que en fichero
+      if (phdr->p_filesz > phdr->p_memsz)
+        return (0);
+
+      // Tiene una virtual addres correcta y dentro de rango
+      if (phdr->p_vaddr > UINT64_MAX - phdr->p_memsz)
+        return (0);
+
+      // Comprobación de alineación
+      if (phdr->p_align > 1 &&
+          ((phdr->p_align & (phdr->p_align - 1)) != 0 ||
+           phdr->p_offset % phdr->p_align != phdr->p_vaddr % phdr->p_align)) {
+        return (0);
+      }
+    }
+  }
+  // Debe de haber como mínimo un PT_LOAD
+  if (pt_load_exits == 0) {
+    return (0);
+  }
+  return (1);
+}
+
+static int validate_shdr64(const unsigned char *original_file,
+                           size_t original_len, const Elf64_Ehdr *ehdr) {
+  const Elf64_Shdr *shdrs;
+
+  shdrs = (const Elf64_Shdr *)(original_len + ehdr->e_shoff);
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    const Elf64_Shdr *shdr = &shdrs[i];
+  }
+
+  return (1);
+}
+
 static int validate_ident(const unsigned char *original_file,
                           size_t original_len) {
   // Comprueba que se pueda leer la identificación completa del ELF
@@ -87,6 +143,19 @@ static int validate_elf64(const unsigned char *original_file,
   if (ehdr->e_shnum == 0) {
     return (0);
   }
+  // Comprueba que exista una tabla de Section Headers en el archivo
+  if (ehdr->e_shoff == 0) {
+    return (0);
+  }
+  // Comprueba que cada entrada tenga el tamaño de un Elf64_Shdr
+  if (ehdr->e_shentsize != sizeof(Elf64_Shdr)) {
+    return (0);
+  }
+  // Comprueba que exista la tabla de nombres de secciones y que su índice
+  // pertenezca a la tabla de Section Headers
+  if (ehdr->e_shstrndx == SHN_UNDEF || ehdr->e_shstrndx >= ehdr->e_shnum) {
+    return (0);
+  }
 
   // -------------------------------------------
   // Validación de los Program Headers
@@ -99,37 +168,26 @@ static int validate_elf64(const unsigned char *original_file,
     return (0);
   }
 
-  const Elf64_Phdr *phdrs;
-  phdrs = (const Elf64_Phdr *)(original_file + ehdr->e_phoff);
-  for (size_t i = 0; i < ehdr->e_phnum; i++) {
-    const Elf64_Phdr *phdr = &phdrs[i];
+  if (!validate_phdr64(original_file, original_len, ehdr)) {
+    return (0);
+  }
 
-    // Ignora las entradas no utilizadas de la tabla
-    if (phdr->p_type == PT_NULL)
-      continue;
+  // -------------------------------------------
+  // Validación de los Sections Headers
+  // -------------------------------------------
+  if (ehdr->e_shoff == 0 || ehdr->e_shentsize != sizeof(Elf64_Shdr) ||
+      ehdr->e_shstrndx == SHN_UNDEF || ehdr->e_shstrndx >= ehdr->e_shnum) {
+    return (0);
+  }
+  // Comprueba que la tabla esté dentro del archivo y que todas sus entradas
+  // quepan en el buffer original
+  if (ehdr->e_shoff > original_len ||
+      ehdr->e_shnum > (original_len - ehdr->e_shoff) / sizeof(Elf64_Shdr)) {
+    return (0);
+  }
 
-    // Comprueba que los datos descritos por la entrada estén dentro del archivo
-    if (!range_is_valid_64(original_len, phdr->p_offset, phdr->p_filesz)) {
-      return (0);
-    }
-
-    // Comprobaciones para segmentos de tipo PT_LOAD
-    if (phdr->p_type == PT_LOAD) {
-      // Tamaño en memoria debe de ser = o > que en fichero
-      if (phdr->p_filesz > phdr->p_memsz)
-        return (0);
-
-      // Tiene una virtual addres correcta y dentro de rango
-      if (phdr->p_vaddr > UINT64_MAX - phdr->p_memsz)
-        return (0);
-
-      // Comprobación de alineación
-      if (phdr->p_align > 1 &&
-          ((phdr->p_align & (phdr->p_align - 1)) != 0 ||
-           phdr->p_offset % phdr->p_align != phdr->p_vaddr % phdr->p_align)) {
-        return (0);
-      }
-    }
+  if (!validate_shdr64(original_file, original_len, ehdr)) {
+    return (0);
   }
 
   return (1);
