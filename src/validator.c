@@ -37,7 +37,34 @@ static int validate_ident(const unsigned char *original_file,
 
 static int validate_elf64(const unsigned char *original_file,
                           size_t original_len, t_elf_info *elf_info) {
-  if (original_len < sizeof(Elf64_Ehdr)) {
+  const Elf64_Ehdr *ehdr = (const Elf64_Ehdr *)original_file;
+
+  // Protección para no chequear un archivo que no tiene tamaño suficiente
+  // como para albergar Elf64_Ehdr
+  if (original_file == NULL || original_len < sizeof(Elf64_Ehdr)) {
+    return (0);
+  }
+
+  // Comprobación que el archivo es de arquitectura Intel 64
+  if (ehdr->e_machine != EM_X86_64) {
+    return (0);
+  }
+
+  // Comprobación de que es tipo ejecutable.
+  // Las librerias dinámicas (ET_DYN) tambien se consideran ejecutables
+  if (ehdr->e_type != ET_EXEC || ehdr->e_type == ET_DYN) {
+    return (0);
+  }
+
+  // Comprueba la version del ELF
+  // EV_CURRENT = versión válida
+  if (ehdr->e_version != EV_CURRENT) {
+    return (0);
+  }
+
+  // Comprueba que el tamaño del Elf64_Ehdr es consistente con lo indicado por
+  // e_ehsize
+  if (ehdr->e_ehsize != sizeof(Elf64_Ehdr)) {
     return (0);
   }
 
