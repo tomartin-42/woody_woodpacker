@@ -126,5 +126,7 @@ int main(int argc, char **argv) {
     munmap(origin_file, origin_len);
     exit(EXIT_FAILURE);
   }
+
+  printf("POINTER %p\n", payload64_start);
   exit(EXIT_SUCCESS);
 }

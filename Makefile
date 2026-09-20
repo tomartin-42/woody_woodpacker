@@ -17,6 +17,10 @@ ASM_FILES = asm_encrypt.asm
 ASM_SRC = $(addprefix $(SRC_DIR), $(ASM_FILES))
 ASM_OBJ = $(addprefix $(OBJ_DIR), $(ASM_FILES:.asm=.o))
 
+PAYLOAD_DIR = ./asm/
+PAYLOAD64_SRC = $(PAYLOAD_DIR)payload64.asm
+PAYLOAD64_OBJ = $(OBJ_DIR)payload64.o
+
 include ./src_list
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJ = $(addprefix $(OBJ_DIR), $(SRC_FILES:.c=.o))
@@ -58,8 +62,11 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 $(OBJ_DIR)%.o: $(SRC_DIR)%.asm
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
-$(NAME): $(OBJ) $(ASM_OBJ)
-	$(CC) $(OBJ) $(ASM_OBJ) $(CFLAGS) $(LNK) -o $@ 
+$(PAYLOAD64_OBJ): $(PAYLOAD64_SRC)
+	$(ASM) $(ASMFLAGS) -o $@ $<
+
+$(NAME): $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ)
+	$(CC) $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ) $(CFLAGS) $(LNK) -o $@ 
 
 bonus: all
 
