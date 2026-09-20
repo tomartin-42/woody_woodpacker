@@ -8,6 +8,28 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// Generación de clave.
+// Genero directamente de longitud 64 y luego la manejo con key_size
+static int generate_key(unsigned char *key) {
+  ssize_t bytes_read;
+  int fd;
+
+  fd = open("/dev/urandom", O_RDONLY);
+  if (fd == -1) {
+    write(2, "open /dev/urandom\n", 18);
+  }
+
+  bytes_read = read(fd, key, 64);
+  close(fd);
+
+  if (bytes_read != 64) {
+    write(2, "read /dev/urandom\n", 18);
+    return (0);
+  }
+
+  return (1);
+}
+
 // Validador flag de parametro de encriptación
 static int validate_second_arg(char *arg) {
   if (ft_strncmp(arg, "-8", 3) == 0) {
@@ -27,11 +49,12 @@ int main(int argc, char **argv) {
   unsigned char *origin_file = NULL;
   off_t origin_len;
   int fd;
+  u_int8_t key_size;
+  unsigned char key[64];
   struct s_elf_info elf_info = {0};
 
   // Comprobaciones
   if (argc < 2 || argc > 3) {
-    printf("N ARG\n");
     write(2, "Error: Invalid option format\n", 29);
     write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
           63);
@@ -40,7 +63,8 @@ int main(int argc, char **argv) {
 
   // Validación 2do arg
   if (argc == 3) {
-    if (validate_second_arg(argv[2]) == 0) {
+    key_size = validate_second_arg(argv[2]);
+    if (key_size == 0) {
       write(2, "Error: Invalid option format\n", 29);
       write(2,
             "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
@@ -98,5 +122,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  if (!generate_key(key)) {
+    write(2, "Error: Can not generate encrypt key\n", 36);
+    munmap(origin_file, origin_len);
+    exit(EXIT_FAILURE);
+  }
   exit(EXIT_SUCCESS);
 }
