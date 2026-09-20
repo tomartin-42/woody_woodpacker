@@ -1,17 +1,7 @@
 #include "../includes/woody.h"
 #include <elf.h>
 
-// Helper para comprobar que el string del nombre de sección tiene '\0' al final
-// y evitar que falle ft_strcmp()
-static int has_null_terminator(const char *string, size_t available) {
-  for (size_t i = 0; i < available; i++) {
-    if (string[i] == '\0')
-      return (1);
-  }
-  return (0);
-}
-
-// Comprueba que el segmento está dentro del archivo
+// Comprueba que un rango está dentro del archivo
 static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   if (offset > file_size)
     return (0);
@@ -21,50 +11,20 @@ static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
 }
 
 static int validate_phdr64(const unsigned char *original_file,
-                           size_t original_len, const Elf64_Ehdr *ehdr,
+                           const Elf64_Ehdr *ehdr,
                            uint64_t *max_load_end) {
   const Elf64_Phdr *phdrs;
   int pt_load_exits = 0;
-  int entry_is_valid = 0;
-  int has_previous_load = 0;
-  int pt_phdr_exists = 0;
-  uint64_t previous_load_vaddr = 0;
-  uint64_t phdr_table_size;
 
-  phdr_table_size = (uint64_t)ehdr->e_phnum * sizeof(Elf64_Phdr);
   *max_load_end = 0;
 
   phdrs = (const Elf64_Phdr *)(original_file + ehdr->e_phoff);
   for (size_t i = 0; i < ehdr->e_phnum; i++) {
     const Elf64_Phdr *phdr = &phdrs[i];
 
-    // Ignora las entradas no utilizadas de la tabla
-    if (phdr->p_type == PT_NULL)
-      continue;
-
-    // Comprueba que los datos descritos por la entrada estén dentro del archivo
-    if (!range_is_valid_64(original_len, phdr->p_offset, phdr->p_filesz)) {
-      return (0);
-    }
-
-    // PT_PHDR debe describir la tabla de Program Headers actual
-    if (phdr->p_type == PT_PHDR) {
-      if (pt_phdr_exists || phdr->p_offset != ehdr->e_phoff ||
-          phdr->p_filesz < phdr_table_size || phdr->p_memsz < phdr->p_filesz) {
-        return (0);
-      }
-      pt_phdr_exists = 1;
-    }
-
     // Comprobaciones para segmentos de tipo PT_LOAD
     if (phdr->p_type == PT_LOAD) {
       pt_load_exits++;
-
-      // Los segmentos cargables deben estar ordenados por dirección virtual
-      if (has_previous_load && phdr->p_vaddr < previous_load_vaddr)
-        return (0);
-      previous_load_vaddr = phdr->p_vaddr;
-      has_previous_load = 1;
 
       // Tamaño en memoria debe de ser = o > que en fichero
       if (phdr->p_filesz > phdr->p_memsz)
@@ -76,26 +36,10 @@ static int validate_phdr64(const unsigned char *original_file,
 
       if (phdr->p_vaddr + phdr->p_memsz > *max_load_end)
         *max_load_end = phdr->p_vaddr + phdr->p_memsz;
-
-      // Comprobación de alineación
-      if (phdr->p_align > 1 &&
-          ((phdr->p_align & (phdr->p_align - 1)) != 0 ||
-           phdr->p_offset % phdr->p_align != phdr->p_vaddr % phdr->p_align)) {
-        return (0);
-      }
-
-      // El entry point debe pertenecer a un segmento ejecutable
-      if ((phdr->p_flags & PF_X) && ehdr->e_entry >= phdr->p_vaddr &&
-          ehdr->e_entry - phdr->p_vaddr < phdr->p_memsz) {
-        entry_is_valid = 1;
-      }
     }
   }
   // Debe de haber como mínimo un PT_LOAD
   if (pt_load_exits == 0) {
-    return (0);
-  }
-  if (!entry_is_valid) {
     return (0);
   }
   return (1);
@@ -117,57 +61,6 @@ static int validate_shdr64(const unsigned char *original_file,
                          shstr_shdr->sh_size)) {
     return (0);
   }
-  const char *section_names =
-      (const char *)(original_file + shstr_shdr->sh_offset);
-
-  // Una tabla de strings ELF debe empezar y terminar con un byte nulo
-  if (shstr_shdr->sh_size == 0 || section_names[0] != '\0' ||
-      section_names[shstr_shdr->sh_size - 1] != '\0') {
-    return (0);
-  }
-
-  for (size_t i = 0; i < ehdr->e_shnum; i++) {
-    const Elf64_Shdr *shdr = &shdrs[i];
-
-    if (shdr->sh_type != SHT_NOBITS &&
-        !range_is_valid_64(original_len, shdr->sh_offset, shdr->sh_size)) {
-      return (0);
-    }
-    // Compruebo secciones cargadas en memoria overflow:
-    if ((shdr->sh_flags & SHF_ALLOC) &&
-        shdr->sh_addr > UINT64_MAX - shdr->sh_size) {
-      return (0);
-    }
-    // Compruebo alineamiento correcto
-    if (shdr->sh_addralign > 1 &&
-        (shdr->sh_addralign & (shdr->sh_addralign - 1)) != 0) {
-      return (0);
-    }
-
-    // El tamaño debe ser múltiplo del tamaño de entrada cuando esté definido
-    if (shdr->sh_entsize != 0 && shdr->sh_size % shdr->sh_entsize != 0) {
-      return (0);
-    }
-
-    // Comprueba la alineación virtual de las secciones cargadas en memoria
-    if ((shdr->sh_flags & SHF_ALLOC) && shdr->sh_addralign > 1 &&
-        shdr->sh_addr % shdr->sh_addralign != 0) {
-      return (0);
-    }
-
-    // Comprueba que el offset del nombre esté dentro de la tabla de strings
-    if (shdr->sh_name >= shstr_shdr->sh_size) {
-      return (0);
-    }
-
-    // Comprobación nombre de sección termina en '\0' y no provocar overflow con
-    // ft_strcmp()
-    if (!has_null_terminator(section_names + shdr->sh_name,
-                             shstr_shdr->sh_size - shdr->sh_name)) {
-      return (0);
-    }
-  }
-
   return (1);
 }
 
@@ -193,12 +86,6 @@ static int validate_ident(const unsigned char *original_file,
   // Comprueba que use little-endian y una versión ELF válida
   if (original_file[EI_DATA] != ELFDATA2LSB ||
       original_file[EI_VERSION] != EV_CURRENT) {
-    return (0);
-  }
-
-  // Los ejecutables Linux pueden declarar ABI System V o Linux
-  if (original_file[EI_OSABI] != ELFOSABI_SYSV &&
-      original_file[EI_OSABI] != ELFOSABI_LINUX) {
     return (0);
   }
 
@@ -274,12 +161,6 @@ static int validate_elf64(const unsigned char *original_file,
   if (ehdr->e_shstrndx == SHN_UNDEF || ehdr->e_shstrndx >= ehdr->e_shnum) {
     return (0);
   }
-  // Los offsets deben permitir accesos alineados a las estructuras ELF64
-  if (ehdr->e_phoff % _Alignof(Elf64_Phdr) != 0 ||
-      ehdr->e_shoff % _Alignof(Elf64_Shdr) != 0) {
-    return (0);
-  }
-
   // -------------------------------------------
   // Validación de los Program Headers
   // -------------------------------------------
@@ -291,7 +172,7 @@ static int validate_elf64(const unsigned char *original_file,
     return (0);
   }
 
-  if (!validate_phdr64(original_file, original_len, ehdr, &max_load_end)) {
+  if (!validate_phdr64(original_file, ehdr, &max_load_end)) {
     return (0);
   }
 
