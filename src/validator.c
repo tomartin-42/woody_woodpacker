@@ -12,7 +12,7 @@ static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   return (1);
 }
 
-int validate_text_segment(const unsigned char *original_file, size_t file_size,
+static int validate_text64(const unsigned char *original_file, size_t file_size,
                            t_elf_info *elf_info) {
 
   const Elf64_Ehdr *ehdr;
@@ -20,11 +20,6 @@ int validate_text_segment(const unsigned char *original_file, size_t file_size,
   const Elf64_Shdr *shstr_shdr;
   const Elf64_Shdr *text;
   const char *section_names;
-
-  // Comprueba los parámetros y limita esta implementación a ELF64
-  if (original_file == NULL || elf_info == NULL ||
-      elf_info->elf_class != WOODY_ELF64)
-    return (0);
 
   // Obtiene las cabeceras de sección y su tabla de nombres
   ehdr = (const Elf64_Ehdr *)original_file;
@@ -70,6 +65,71 @@ int validate_text_segment(const unsigned char *original_file, size_t file_size,
   elf_info->text_size = text->sh_size;
 
   return (1);
+}
+
+static int validate_text32(const unsigned char *original_file, size_t file_size,
+                           t_elf_info *elf_info) {
+  const Elf32_Ehdr *ehdr;
+  const Elf32_Shdr *shdrs;
+  const Elf32_Shdr *shstr_shdr;
+  const Elf32_Shdr *text;
+  const char *section_names;
+
+  // Obtiene las cabeceras de sección y su tabla de nombres
+  ehdr = (const Elf32_Ehdr *)original_file;
+  shdrs = (const Elf32_Shdr *)(original_file + ehdr->e_shoff);
+  shstr_shdr = &shdrs[ehdr->e_shstrndx];
+  section_names = (const char *)(original_file + shstr_shdr->sh_offset);
+
+  text = NULL;
+  // Recorre las secciones para localizar un único nombre .text válido
+  for (size_t i = 0; i < ehdr->e_shnum; i++) {
+    size_t remain;
+
+    if (shdrs[i].sh_name >= shstr_shdr->sh_size)
+      return (0);
+    remain = shstr_shdr->sh_size - shdrs[i].sh_name;
+    // La comparación incluye el terminador para exigir el nombre exacto
+    if (remain >= 6 &&
+        ft_strncmp(section_names + shdrs[i].sh_name, ".text", 6) == 0) {
+      // Solo admite una sección .text
+      if (text != NULL)
+        return (0);
+      text = &shdrs[i];
+    }
+  }
+  // No hay sección .text
+  if (text == NULL)
+    return (0);
+
+  // Comprueba las propiedades de la sección .text
+  if (text->sh_type != SHT_PROGBITS || !(text->sh_flags & SHF_ALLOC) ||
+      !(text->sh_flags & SHF_EXECINSTR) || text->sh_size == 0) {
+    return (0);
+  }
+
+  // Comprueba que el contenido de .text esté dentro del archivo
+  if (!range_is_valid_64(file_size, text->sh_offset, text->sh_size))
+    return (0);
+
+  // Guarda la información normalizada de .text
+  elf_info->text_shdr = (void *)text;
+  elf_info->text_offset = text->sh_offset;
+  elf_info->text_vaddr = text->sh_addr;
+  elf_info->text_size = text->sh_size;
+
+  return (1);
+}
+
+int validate_text_segment(const unsigned char *original_file, size_t file_size,
+                          t_elf_info *elf_info) {
+  if (original_file == NULL || elf_info == NULL)
+    return (0);
+  if (elf_info->elf_class == WOODY_ELF64)
+    return (validate_text64(original_file, file_size, elf_info));
+  if (elf_info->elf_class == WOODY_ELF32)
+    return (validate_text32(original_file, file_size, elf_info));
+  return (0);
 }
 
 static int validate_phdr64(const unsigned char *original_file,

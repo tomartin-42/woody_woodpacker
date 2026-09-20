@@ -25,4 +25,4 @@ int validate_elf(const unsigned char *file, size_t file_size, t_elf_info *info);
 int validate_text_segment(const unsigned char *file, size_t file_size,
                           t_elf_info *elf_info);
 
-#endif // DEBUG
+#endif
