@@ -16,14 +16,13 @@ static int generate_key(unsigned char *key) {
 
   fd = open("/dev/urandom", O_RDONLY);
   if (fd == -1) {
-    write(2, "open /dev/urandom\n", 18);
+    return (0);
   }
 
   bytes_read = read(fd, key, 64);
   close(fd);
 
   if (bytes_read != 64) {
-    write(2, "read /dev/urandom\n", 18);
     return (0);
   }
 
