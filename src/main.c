@@ -91,7 +91,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  // Validaciones y finder segmento .text
   if (!validate_text_segment(origin_file, origin_len, &elf_info)) {
+    write(2, "Error: Invalid section .text\n", 29);
+    munmap(origin_file, origin_len);
     exit(EXIT_FAILURE);
   }
 

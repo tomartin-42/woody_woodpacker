@@ -121,15 +121,22 @@ static int validate_text32(const unsigned char *original_file, size_t file_size,
   return (1);
 }
 
+// Validaciones y finder segmento .text
 int validate_text_segment(const unsigned char *original_file, size_t file_size,
                           t_elf_info *elf_info) {
   if (original_file == NULL || elf_info == NULL)
     return (0);
-  if (elf_info->elf_class == WOODY_ELF64)
-    return (validate_text64(original_file, file_size, elf_info));
-  if (elf_info->elf_class == WOODY_ELF32)
-    return (validate_text32(original_file, file_size, elf_info));
-  return (0);
+  if (elf_info->elf_class == WOODY_ELF64) {
+    if (!validate_text64(original_file, file_size, elf_info)) {
+      return (0);
+    }
+  }
+  if (elf_info->elf_class == WOODY_ELF32) {
+    if (!validate_text32(original_file, file_size, elf_info)) {
+      return (0);
+    }
+  }
+  return (1);
 }
 
 static int validate_phdr64(const unsigned char *original_file,
