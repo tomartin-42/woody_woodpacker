@@ -1,6 +1,16 @@
 #include "../includes/woody.h"
 #include <elf.h>
 
+// Helper para comprobar que el string del nombre de sección tiene '\0' al final
+// y evitar que falle ft_strcmp()
+static int has_null_terminator(const char *string, size_t available) {
+  for (size_t i = 0; i < available; i++) {
+    if (string[i] == '\0')
+      return (1);
+  }
+  return (0);
+}
+
 // Comprueba que el segmento está dentro del archivo
 static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   if (offset > file_size)
@@ -57,10 +67,57 @@ static int validate_phdr64(const unsigned char *original_file,
 static int validate_shdr64(const unsigned char *original_file,
                            size_t original_len, const Elf64_Ehdr *ehdr) {
   const Elf64_Shdr *shdrs;
+  const Elf64_Shdr *shstr_shdr;
 
-  shdrs = (const Elf64_Shdr *)(original_len + ehdr->e_shoff);
-  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+  // Comprobación que la stringtab es de tipo SHT_STRTAB
+  shdrs = (const Elf64_Shdr *)(original_file + ehdr->e_shoff);
+  shstr_shdr = &shdrs[ehdr->e_shstrndx];
+  if (shstr_shdr->sh_type != SHT_STRTAB)
+    return (0);
+
+  // Compruebo el rango de la sección de nombres y obtengo la sección de nombres
+  if (!range_is_valid_64(original_len, shstr_shdr->sh_offset,
+                         shstr_shdr->sh_size)) {
+    return (0);
+  }
+  const char *section_names =
+      (const char *)(original_file + shstr_shdr->sh_offset);
+
+  for (size_t i = 0; i < ehdr->e_shnum; i++) {
     const Elf64_Shdr *shdr = &shdrs[i];
+
+    if (shdr->sh_type != SHT_NOBITS &&
+        !range_is_valid_64(original_len, shdr->sh_offset, shdr->sh_size)) {
+      return (0);
+    }
+    // Compruebo secciones cargadas en memoria overflow:
+    if ((shdr->sh_flags & SHF_ALLOC) &&
+        shdr->sh_addr > UINT64_MAX - shdr->sh_size) {
+      return (0);
+    }
+    // Compruebo alineamiento correcto
+    if (shdr->sh_addralign > 1 &&
+        (shdr->sh_addralign & (shdr->sh_addralign - 1)) != 0) {
+      return (0);
+    }
+
+    // Comprueba la alineación virtual de las secciones cargadas en memoria
+    if ((shdr->sh_flags & SHF_ALLOC) && shdr->sh_addralign > 1 &&
+        shdr->sh_addr % shdr->sh_addralign != 0) {
+      return (0);
+    }
+
+    // Comprueba que el offset del nombre esté dentro de la tabla de strings
+    if (shdr->sh_name >= shstr_shdr->sh_size) {
+      return (0);
+    }
+
+    // Comprobación nombre de sección termina en '\0' y no provocar overflow con
+    // ft_strcmp()
+    if (!has_null_terminator(section_names + shdr->sh_name,
+                             shstr_shdr->sh_size - shdr->sh_name)) {
+      return (0);
+    }
   }
 
   return (1);
@@ -175,10 +232,6 @@ static int validate_elf64(const unsigned char *original_file,
   // -------------------------------------------
   // Validación de los Sections Headers
   // -------------------------------------------
-  if (ehdr->e_shoff == 0 || ehdr->e_shentsize != sizeof(Elf64_Shdr) ||
-      ehdr->e_shstrndx == SHN_UNDEF || ehdr->e_shstrndx >= ehdr->e_shnum) {
-    return (0);
-  }
   // Comprueba que la tabla esté dentro del archivo y que todas sus entradas
   // quepan en el buffer original
   if (ehdr->e_shoff > original_len ||
