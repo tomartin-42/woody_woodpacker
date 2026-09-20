@@ -16,6 +16,7 @@ typedef struct s_elf_info {
   uint64_t text_offset;
   uint64_t text_vaddr;
   uint64_t text_size;
+  // Fin virtual más alto de los PT_LOAD; base del nuevo segmento
   uint64_t max_load_end;
 } t_elf_info;
 

@@ -1,4 +1,5 @@
 #include "../includes/woody.h"
+#include "libft.h"
 #include <elf.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -8,16 +9,17 @@
 #include <unistd.h>
 
 // Validador flag de parametro de encriptación
-static int validate_second_arg(char **argv) {
-  int flag_value;
-
-  flag_value = atoi(&argv[2][1]);
-
-  if (flag_value != 8 && flag_value != 16 && flag_value != 32 &&
-      flag_value != 64) {
-    flag_value = 0;
+static int validate_second_arg(char *arg) {
+  if (ft_strncmp(arg, "-8", 3) == 0) {
+    return (8);
   }
-  return flag_value;
+  if (ft_strncmp(arg, "-16", 4) == 0)
+    return (16);
+  if (ft_strncmp(arg, "-32", 4) == 0)
+    return (32);
+  if (ft_strncmp(arg, "-64", 4) == 0)
+    return (64);
+  return (0);
 }
 
 int main(int argc, char **argv) {
@@ -29,17 +31,22 @@ int main(int argc, char **argv) {
 
   // Comprobaciones
   if (argc < 2 || argc > 3) {
+    printf("N ARG\n");
     write(2, "Error: Invalid option format\n", 29);
     write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
           63);
     exit(EXIT_FAILURE);
   }
 
-  if (argc == 3 && (argv[2][0] != '-' || !validate_second_arg(argv))) {
-    write(2, "Error: Invalid option format\n", 29);
-    write(2, "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
-          63);
-    exit(EXIT_FAILURE);
+  // Validación 2do arg
+  if (argc == 3) {
+    if (validate_second_arg(argv[2]) == 0) {
+      write(2, "Error: Invalid option format\n", 29);
+      write(2,
+            "Usage: ./woody_woodpacker <target_file> [-8 | -16 | -32 | -64]\n",
+            63);
+      exit(EXIT_FAILURE);
+    }
   }
 
   if ((fd = open(argv[1], O_RDONLY)) == -1) {
@@ -77,5 +84,12 @@ int main(int argc, char **argv) {
 
   close(fd);
 
-  validate_elf(origin_file, origin_len, &elf_info);
+  // Validaciones para la integridad y definición del Elf
+  if (!validate_elf(origin_file, origin_len, &elf_info)) {
+    write(2, "Error: Invalid Elf format\n", 26);
+    munmap(origin_file, origin_len);
+    exit(EXIT_FAILURE);
+  }
+
+  exit(EXIT_SUCCESS);
 }

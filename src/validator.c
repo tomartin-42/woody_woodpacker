@@ -34,6 +34,7 @@ static int validate_phdr64(const unsigned char *original_file,
       if (phdr->p_vaddr > UINT64_MAX - phdr->p_memsz)
         return (0);
 
+      // Conserva el final virtual más alto de los segmentos cargables
       if (phdr->p_vaddr + phdr->p_memsz > *max_load_end)
         *max_load_end = phdr->p_vaddr + phdr->p_memsz;
     }
@@ -64,8 +65,62 @@ static int validate_shdr64(const unsigned char *original_file,
   return (1);
 }
 
+static int validate_phdr32(const unsigned char *original_file,
+                           const Elf32_Ehdr *ehdr,
+                           uint64_t *max_load_end) {
+  const Elf32_Phdr *phdrs;
+  int pt_load_exits = 0;
+
+  *max_load_end = 0;
+  phdrs = (const Elf32_Phdr *)(original_file + ehdr->e_phoff);
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    const Elf32_Phdr *phdr = &phdrs[i];
+
+    // Comprobaciones para segmentos de tipo PT_LOAD
+    if (phdr->p_type == PT_LOAD) {
+      pt_load_exits++;
+
+      // Tamaño en memoria debe de ser = o > que en fichero
+      if (phdr->p_filesz > phdr->p_memsz)
+        return (0);
+
+      // Comprueba que el final virtual se pueda representar en ELF32
+      if (phdr->p_vaddr > UINT32_MAX - phdr->p_memsz)
+        return (0);
+
+      // Conserva el final virtual más alto de los segmentos cargables
+      if ((uint64_t)phdr->p_vaddr + phdr->p_memsz > *max_load_end)
+        *max_load_end = (uint64_t)phdr->p_vaddr + phdr->p_memsz;
+    }
+  }
+  // Debe de haber como mínimo un PT_LOAD
+  if (pt_load_exits == 0) {
+    return (0);
+  }
+  return (1);
+}
+
+static int validate_shdr32(const unsigned char *original_file,
+                           size_t original_len, const Elf32_Ehdr *ehdr) {
+  const Elf32_Shdr *shdrs;
+  const Elf32_Shdr *shstr_shdr;
+
+  // Comprobación que la stringtab es de tipo SHT_STRTAB
+  shdrs = (const Elf32_Shdr *)(original_file + ehdr->e_shoff);
+  shstr_shdr = &shdrs[ehdr->e_shstrndx];
+  if (shstr_shdr->sh_type != SHT_STRTAB)
+    return (0);
+
+  // Comprueba que la sección de nombres esté dentro del archivo
+  if (!range_is_valid_64(original_len, shstr_shdr->sh_offset,
+                         shstr_shdr->sh_size)) {
+    return (0);
+  }
+  return (1);
+}
+
 static int validate_ident(const unsigned char *original_file,
-                          size_t original_len) {
+                           size_t original_len) {
   // Comprueba que se pueda leer la identificación completa del ELF
   if (original_file == NULL || original_len < EI_NIDENT) {
     return (0);
@@ -204,8 +259,79 @@ static int validate_elf64(const unsigned char *original_file,
 }
 
 static int validate_elf32(const unsigned char *original_file,
-                          size_t original_len, t_elf_info *elf_info) {
-  return (0);
+                           size_t original_len, t_elf_info *elf_info) {
+  const Elf32_Ehdr *ehdr;
+  const Elf32_Phdr *phdrs;
+  const Elf32_Shdr *shdrs;
+  t_elf_info result = {0};
+  uint64_t max_load_end;
+
+  // Protección para no leer un archivo menor que una cabecera ELF32
+  if (original_file == NULL || original_len < sizeof(Elf32_Ehdr)) {
+    return (0);
+  }
+  ehdr = (const Elf32_Ehdr *)original_file;
+
+  // Comprueba que el archivo sea para arquitectura Intel x86 de 32 bits
+  if (ehdr->e_machine != EM_386) {
+    return (0);
+  }
+  // Comprueba que sea un ejecutable ET_EXEC o ET_DYN, formato usado por PIE
+  if (ehdr->e_type != ET_EXEC && ehdr->e_type != ET_DYN) {
+    return (0);
+  }
+  if (ehdr->e_version != EV_CURRENT ||
+      ehdr->e_ehsize != sizeof(Elf32_Ehdr)) {
+    return (0);
+  }
+
+  // Comprueba la presencia y el formato de la tabla de Program Headers
+  if (ehdr->e_phnum == 0 || ehdr->e_phoff == 0 ||
+      ehdr->e_phentsize != sizeof(Elf32_Phdr)) {
+    return (0);
+  }
+  // Rechaza formatos extendidos y reserva una entrada para el nuevo segmento
+  if (ehdr->e_phnum == PN_XNUM || ehdr->e_phnum >= PN_XNUM - 1 ||
+      ehdr->e_shstrndx == SHN_XINDEX) {
+    return (0);
+  }
+
+  // Comprueba la presencia y el formato de la tabla de Section Headers
+  if (ehdr->e_shnum == 0 || ehdr->e_shoff == 0 ||
+      ehdr->e_shentsize != sizeof(Elf32_Shdr) ||
+      ehdr->e_shstrndx == SHN_UNDEF || ehdr->e_shstrndx >= ehdr->e_shnum) {
+    return (0);
+  }
+
+  // Comprueba que la tabla PHDR completa esté dentro del archivo
+  if (ehdr->e_phoff > original_len ||
+      ehdr->e_phnum > (original_len - ehdr->e_phoff) / sizeof(Elf32_Phdr)) {
+    return (0);
+  }
+  if (!validate_phdr32(original_file, ehdr, &max_load_end)) {
+    return (0);
+  }
+
+  // Comprueba que la tabla SHDR completa esté dentro del archivo
+  if (ehdr->e_shoff > original_len ||
+      ehdr->e_shnum > (original_len - ehdr->e_shoff) / sizeof(Elf32_Shdr)) {
+    return (0);
+  }
+  if (!validate_shdr32(original_file, original_len, ehdr)) {
+    return (0);
+  }
+
+  phdrs = (const Elf32_Phdr *)(original_file + ehdr->e_phoff);
+  shdrs = (const Elf32_Shdr *)(original_file + ehdr->e_shoff);
+  result.elf_class = WOODY_ELF32;
+  result.ehdr = (void *)ehdr;
+  result.phdrs = (void *)phdrs;
+  result.shdrs = (void *)shdrs;
+  result.old_entry = ehdr->e_entry;
+  result.max_load_end = max_load_end;
+  *elf_info = result;
+
+  return (1);
 }
 
 int validate_elf(const unsigned char *original_file, size_t original_len,
