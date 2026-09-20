@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  if (!validate_text_segment(origin_file, origin_len, &elf_info){
+  if (!validate_text_segment(origin_file, origin_len, &elf_info)) {
     exit(EXIT_FAILURE);
   }
 
