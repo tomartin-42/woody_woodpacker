@@ -127,6 +127,6 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  printf("POINTER %p\n", payload64_start);
+  printf("POINTER %p %s\n", payload64_woody_str, payload64_woody_str);
   exit(EXIT_SUCCESS);
 }

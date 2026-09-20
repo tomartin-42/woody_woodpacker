@@ -19,12 +19,15 @@ typedef struct s_elf_info {
   uint64_t max_load_end; // Fin virtual más alto de los PT_LOAD; base del nuevo
                          // segmento
 } t_elf_info;
+
+// Declaraciones para acceso al payload64.asm
 extern const unsigned char payload64_start[];
 extern const unsigned char payload64_end[];
 extern const unsigned char payload64_text_delta[];
 extern const unsigned char payload64_entry_delta[];
 extern const unsigned char payload64_text_size[];
 extern const unsigned char payload64_key_size[];
+extern const unsigned char payload64_woody_str[];
 extern const unsigned char payload64_key[];
 int validate_elf(const unsigned char *file, size_t file_size, t_elf_info *info);
 int validate_text_segment(const unsigned char *file, size_t file_size,
