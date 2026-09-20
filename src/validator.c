@@ -1,6 +1,23 @@
 #include "../includes/woody.h"
 #include <elf.h>
 
+int validate_text_segment(const unsigned char *original_file, size_t file_size,
+                          t_elf_info *elf_info) {
+
+  const Elf64_Ehdr *ehdr;
+  const Elf64_Phdr *phdrs;
+  const Elf64_Shdr *shdrs;
+  const Elf64_Shdr *shstr_shdr;
+  const char *section_names;
+
+  ehdr = (const Elf64_Ehdr *)original_file;
+  phdrs = (const Elf64_Phdr *)(original_file + ehdr->e_phoff);
+  shdrs = (const Elf64_Shdr *)(original_file + ehdr->e_shoff);
+  shstr_shdr = &shdrs[ehdr->e_shstrndx];
+  section_names = (const char *)(original_file + shstr_shdr->sh_offset);
+
+  retunr(1);
+}
 // Comprueba que un rango está dentro del archivo
 static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   if (offset > file_size)
@@ -11,8 +28,7 @@ static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
 }
 
 static int validate_phdr64(const unsigned char *original_file,
-                           const Elf64_Ehdr *ehdr,
-                           uint64_t *max_load_end) {
+                           const Elf64_Ehdr *ehdr, uint64_t *max_load_end) {
   const Elf64_Phdr *phdrs;
   int pt_load_exits = 0;
 
@@ -66,8 +82,7 @@ static int validate_shdr64(const unsigned char *original_file,
 }
 
 static int validate_phdr32(const unsigned char *original_file,
-                           const Elf32_Ehdr *ehdr,
-                           uint64_t *max_load_end) {
+                           const Elf32_Ehdr *ehdr, uint64_t *max_load_end) {
   const Elf32_Phdr *phdrs;
   int pt_load_exits = 0;
 
@@ -120,7 +135,7 @@ static int validate_shdr32(const unsigned char *original_file,
 }
 
 static int validate_ident(const unsigned char *original_file,
-                           size_t original_len) {
+                          size_t original_len) {
   // Comprueba que se pueda leer la identificación completa del ELF
   if (original_file == NULL || original_len < EI_NIDENT) {
     return (0);
@@ -148,7 +163,7 @@ static int validate_ident(const unsigned char *original_file,
 }
 
 static int validate_elf64(const unsigned char *original_file,
-                           size_t original_len, t_elf_info *elf_info) {
+                          size_t original_len, t_elf_info *elf_info) {
   const Elf64_Ehdr *ehdr;
   const Elf64_Phdr *phdrs;
   const Elf64_Shdr *shdrs;
@@ -259,7 +274,7 @@ static int validate_elf64(const unsigned char *original_file,
 }
 
 static int validate_elf32(const unsigned char *original_file,
-                           size_t original_len, t_elf_info *elf_info) {
+                          size_t original_len, t_elf_info *elf_info) {
   const Elf32_Ehdr *ehdr;
   const Elf32_Phdr *phdrs;
   const Elf32_Shdr *shdrs;
@@ -280,8 +295,7 @@ static int validate_elf32(const unsigned char *original_file,
   if (ehdr->e_type != ET_EXEC && ehdr->e_type != ET_DYN) {
     return (0);
   }
-  if (ehdr->e_version != EV_CURRENT ||
-      ehdr->e_ehsize != sizeof(Elf32_Ehdr)) {
+  if (ehdr->e_version != EV_CURRENT || ehdr->e_ehsize != sizeof(Elf32_Ehdr)) {
     return (0);
   }
 
@@ -335,7 +349,7 @@ static int validate_elf32(const unsigned char *original_file,
 }
 
 int validate_elf(const unsigned char *original_file, size_t original_len,
-                  t_elf_info *elf_info) {
+                 t_elf_info *elf_info) {
   if (elf_info == NULL || !validate_ident(original_file, original_len)) {
     return (0);
   }

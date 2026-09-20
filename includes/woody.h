@@ -16,10 +16,13 @@ typedef struct s_elf_info {
   uint64_t text_offset;
   uint64_t text_vaddr;
   uint64_t text_size;
-  // Fin virtual más alto de los PT_LOAD; base del nuevo segmento
-  uint64_t max_load_end;
+  uint64_t max_load_end; // Fin virtual más alto de los PT_LOAD; base del nuevo
+                         // segmento
+
 } t_elf_info;
 
 int validate_elf(const unsigned char *file, size_t file_size, t_elf_info *info);
+int validate_text_segment(const unsigned char *file, size_t file_size,
+                          t_elf_info *elf_info);
 
 #endif // DEBUG
