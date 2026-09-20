@@ -12,6 +12,128 @@ static int range_is_valid_64(size_t file_size, uint64_t offset, uint64_t size) {
   return (1);
 }
 
+static int validate_pt_load64(t_elf_info *elf_info) {
+  const Elf64_Ehdr *ehdr;
+  const Elf64_Phdr *phdrs;
+  const Elf64_Phdr *text_segment;
+
+  // Obtiene la cabecera ELF y su tabla de Program Headers
+  ehdr = (const Elf64_Ehdr *)elf_info->ehdr;
+  phdrs = (const Elf64_Phdr *)elf_info->phdrs;
+  text_segment = NULL;
+
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    uint64_t file_delta;
+    uint64_t virtual_delta;
+
+    // Busca únicamente segmentos cargables y ejecutables
+    if (phdrs[i].p_type != PT_LOAD || !(phdrs[i].p_flags & PF_X)) {
+      continue;
+    }
+
+    // .text no puede comenzar antes que el segmento
+    if (elf_info->text_offset < phdrs[i].p_offset ||
+        elf_info->text_vaddr < phdrs[i].p_vaddr) {
+      continue;
+    }
+
+    // Calcula la posición de .text dentro del segmento
+    file_delta = elf_info->text_offset - phdrs[i].p_offset;
+    virtual_delta = elf_info->text_vaddr - phdrs[i].p_vaddr;
+
+    // Comprueba que .text quepa en la parte del segmento presente en el archivo
+    if (file_delta > phdrs[i].p_filesz ||
+        elf_info->text_size > phdrs[i].p_filesz - file_delta) {
+      continue;
+    }
+
+    // Comprueba que .text quepa también en el rango virtual del segmento
+    if (virtual_delta > phdrs[i].p_memsz ||
+        elf_info->text_size > phdrs[i].p_memsz - virtual_delta) {
+      continue;
+    }
+
+    // El desplazamiento físico y virtual de .text debe coincidir
+    if (file_delta != virtual_delta) {
+      continue;
+    }
+
+    // Solo un segmento puede contener .text
+    if (text_segment != NULL)
+      return (0);
+
+    text_segment = &phdrs[i];
+  }
+
+  // No existe un PT_LOAD ejecutable que contenga .text
+  if (text_segment == NULL)
+    return (0);
+
+  // Guarda el segmento que contiene la sección .text
+  elf_info->text_segment = (void *)text_segment;
+  return (1);
+}
+
+static int validate_pt_load32(t_elf_info *elf_info) {
+  const Elf32_Ehdr *ehdr;
+  const Elf32_Phdr *phdrs;
+  const Elf32_Phdr *text_segment;
+
+  // Obtiene la cabecera ELF y su tabla de Program Headers
+  ehdr = (const Elf32_Ehdr *)elf_info->ehdr;
+  phdrs = (const Elf32_Phdr *)elf_info->phdrs;
+  text_segment = NULL;
+
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    uint64_t file_delta;
+    uint64_t virtual_delta;
+
+    // Busca únicamente segmentos cargables y ejecutables
+    if (phdrs[i].p_type != PT_LOAD || !(phdrs[i].p_flags & PF_X))
+      continue;
+
+    // .text no puede comenzar antes que el segmento
+    if (elf_info->text_offset < phdrs[i].p_offset ||
+        elf_info->text_vaddr < phdrs[i].p_vaddr) {
+      continue;
+    }
+
+    // Calcula la posición de .text dentro del segmento
+    file_delta = elf_info->text_offset - phdrs[i].p_offset;
+    virtual_delta = elf_info->text_vaddr - phdrs[i].p_vaddr;
+
+    // Comprueba que .text quepa en la parte del segmento presente en el archivo
+    if (file_delta > phdrs[i].p_filesz ||
+        elf_info->text_size > phdrs[i].p_filesz - file_delta) {
+      continue;
+    }
+
+    // Comprueba que .text quepa también en el rango virtual del segmento
+    if (virtual_delta > phdrs[i].p_memsz ||
+        elf_info->text_size > phdrs[i].p_memsz - virtual_delta) {
+      continue;
+    }
+
+    // El desplazamiento físico y virtual de .text debe coincidir
+    if (file_delta != virtual_delta)
+      continue;
+
+    // Solo un segmento puede contener .text
+    if (text_segment != NULL)
+      return (0);
+
+    text_segment = &phdrs[i];
+  }
+
+  // No existe un PT_LOAD ejecutable que contenga .text
+  if (text_segment == NULL)
+    return (0);
+
+  // Guarda el segmento que contiene la sección .text
+  elf_info->text_segment = (void *)text_segment;
+  return (1);
+}
+
 static int validate_text64(const unsigned char *original_file, size_t file_size,
                            t_elf_info *elf_info) {
 
@@ -123,20 +245,24 @@ static int validate_text32(const unsigned char *original_file, size_t file_size,
 
 // Validaciones y finder segmento .text
 int validate_text_segment(const unsigned char *original_file, size_t file_size,
-                          t_elf_info *elf_info) {
+                           t_elf_info *elf_info) {
   if (original_file == NULL || elf_info == NULL)
     return (0);
   if (elf_info->elf_class == WOODY_ELF64) {
-    if (!validate_text64(original_file, file_size, elf_info)) {
+    if (!validate_text64(original_file, file_size, elf_info) ||
+        !validate_pt_load64(elf_info)) {
       return (0);
     }
+    return (1);
   }
   if (elf_info->elf_class == WOODY_ELF32) {
-    if (!validate_text32(original_file, file_size, elf_info)) {
+    if (!validate_text32(original_file, file_size, elf_info) ||
+        !validate_pt_load32(elf_info)) {
       return (0);
     }
+    return (1);
   }
-  return (1);
+  return (0);
 }
 
 static int validate_phdr64(const unsigned char *original_file,
