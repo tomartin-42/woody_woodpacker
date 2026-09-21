@@ -58,11 +58,12 @@ static int load_data(size_t origin_len, t_elf_info *elf_info,
 
 static Elf64_Phdr *generate_new_phdr(t_elf_info *elf_info,
                                      t_cave_info *cave_info) {
-  Elf64_Ehdr *ehdr;
+  const Elf64_Ehdr *ehdr;
   Elf64_Phdr *new_phdrs;
   Elf64_Phdr *new_segment;
+  unsigned int found;
 
-  ehdr = (Elf64_Ehdr *)elf_info->ehdr;
+  ehdr = (const Elf64_Ehdr *)elf_info->ehdr;
 
   // Reserva espacio para la tabla original y la nueva entrada PT_LOAD
   new_phdrs = malloc(cave_info->phdr_size);
@@ -92,6 +93,35 @@ static Elf64_Phdr *generate_new_phdr(t_elf_info *elf_info,
   // iguales
   new_segment->p_memsz = new_segment->p_filesz;
   new_segment->p_align = 0x1000;
+
+  // Si existe PT_PHDR, actualiza la ubicación de la tabla que describe
+  found = 0;
+  for (size_t i = 0; i < ehdr->e_phnum; i++) {
+    if (new_phdrs[i].p_type == PT_PHDR) {
+      found++;
+      new_phdrs[i].p_offset = cave_info->phdr_offset;
+
+      // Convierte el offset de la tabla dentro del nuevo PT_LOAD a dirección
+      // virtual: base virtual + (offset de la tabla - offset del segmento).
+      new_phdrs[i].p_vaddr =
+          cave_info->new_segment_vaddr +
+          (cave_info->phdr_offset - cave_info->injection_offset);
+
+      // PT_PHDR describe exactamente la nueva tabla en memoria y en archivo
+      new_phdrs[i].p_paddr = new_phdrs[i].p_vaddr;
+      new_phdrs[i].p_filesz = cave_info->phdr_size;
+      new_phdrs[i].p_memsz = cave_info->phdr_size;
+      new_phdrs[i].p_flags = PF_R;
+      new_phdrs[i].p_align = 8;
+    }
+  }
+
+  // PT_PHDR es opcional, pero una tabla no debe contener más de uno
+  if (found > 1) {
+    free(new_phdrs);
+    return (NULL);
+  }
+
   return (new_phdrs);
 }
 
