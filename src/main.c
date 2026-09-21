@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   unsigned char *origin_file = NULL;
   off_t origin_len;
   int fd;
-  u_int8_t key_size;
+  u_int8_t key_size = 32;
   unsigned char key[64];
   struct s_elf_info elf_info = {0};
   struct s_cave_info cave_info = {0};
