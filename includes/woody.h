@@ -21,6 +21,8 @@ typedef struct s_elf_info {
 } t_elf_info;
 
 typedef struct s_cave_info {
+  void *new_phdrs;
+  unsigned char *payload;
   uint64_t injection_offset;
   uint64_t new_segment_vaddr;
   uint64_t phdr_offset;

@@ -67,8 +67,9 @@ static Elf64_Phdr *generate_new_phdr(t_elf_info *elf_info,
 
   // Reserva espacio para la tabla original y la nueva entrada PT_LOAD
   new_phdrs = malloc(cave_info->phdr_size);
-  if (new_phdrs == NULL)
+  if (new_phdrs == NULL) {
     return (NULL);
+  }
 
   // Copia las entradas originales al comienzo de la nueva tabla
   ft_memcpy(new_phdrs, elf_info->phdrs, ehdr->e_phnum * sizeof(Elf64_Phdr));
@@ -125,16 +126,40 @@ static Elf64_Phdr *generate_new_phdr(t_elf_info *elf_info,
   return (new_phdrs);
 }
 
+static unsigned char *generate_payload(t_elf_info *elf_info,
+                                       t_cave_info *cave_info) {
+  unsigned char *payload = NULL;
+
+  payload = malloc(cave_info->payload_size);
+  if (payload == NULL) {
+    return (NULL);
+  }
+
+  ft_memcpy(payload, payload64_start, cave_info->payload_size);
+
+  int64_t text_delta =
+      (int64_t)elf_info->text_vaddr - (int64_t)cave_info->payload_vaddr;
+
+  size_t offset =
+      (size_t)((uintptr_t)payload64_text_delta - (uintptr_t)payload64_start);
+
+  ft_memcpy(payload + offset, &text_delta, sizeof(text_delta));
+  return (payload);
+}
+
 int generate_cave64(size_t origin_len, t_elf_info *elf_info,
                     t_cave_info *cave_info) {
-  Elf64_Phdr *new_phdrs;
-
   if (!load_data(origin_len, elf_info, cave_info)) {
     return (0);
   }
 
-  new_phdrs = generate_new_phdr(elf_info, cave_info);
-  if (!new_phdrs) {
+  cave_info->new_phdrs = generate_new_phdr(elf_info, cave_info);
+  if (!cave_info->new_phdrs) {
+    return (0);
+  }
+
+  cave_info->payload = generate_payload(elf_info, cave_info);
+  if (!cave_info->payload) {
     return (0);
   }
 
