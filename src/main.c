@@ -127,6 +127,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  if (!generate_cave(origin_len, &elf_info)) {
+    write(2, "Error: Can not generate cave\n", 29);
+    munmap(origin_file, origin_len);
+    exit(EXIT_FAILURE);
+  }
   printf("POINTER %p %s\n", payload64_woody_str, payload64_woody_str);
   exit(EXIT_SUCCESS);
 }

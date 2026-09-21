@@ -29,8 +29,10 @@ extern const unsigned char payload64_text_size[];
 extern const unsigned char payload64_key_size[];
 extern const unsigned char payload64_woody_str[];
 extern const unsigned char payload64_key[];
-int validate_elf(const unsigned char *file, size_t file_size, t_elf_info *info);
+
+int validate_elf(const unsigned char *file, size_t file_size,
+                 t_elf_info *t_elf_info);
 int validate_text_segment(const unsigned char *file, size_t file_size,
                           t_elf_info *elf_info);
-
+int generate_cave(size_t origin_len, t_elf_info *elf_info);
 #endif
