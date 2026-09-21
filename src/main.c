@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
   u_int8_t key_size;
   unsigned char key[64];
   struct s_elf_info elf_info = {0};
+  struct s_cave_info cave_info = {0};
 
   // Comprobaciones
   if (argc < 2 || argc > 3) {
@@ -127,10 +128,14 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  if (!generate_cave(origin_len, &elf_info)) {
-    write(2, "Error: Can not generate cave\n", 29);
-    munmap(origin_file, origin_len);
-    exit(EXIT_FAILURE);
+  if (elf_info.elf_class == WOODY_ELF64) {
+    if (!generate_cave64(origin_len, &elf_info, &cave_info)) {
+      write(2, "Error: Can not generate cave\n", 29);
+      munmap(origin_file, origin_len);
+      exit(EXIT_FAILURE);
+    }
+  } else {
+    // 32bits
   }
   printf("POINTER %p %s\n", payload64_woody_str, payload64_woody_str);
   exit(EXIT_SUCCESS);

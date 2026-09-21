@@ -20,6 +20,17 @@ typedef struct s_elf_info {
                          // segmento
 } t_elf_info;
 
+typedef struct s_cave_info {
+  uint64_t injection_offset;
+  uint64_t new_segment_vaddr;
+  uint64_t phdr_offset;
+  uint64_t phdr_size;
+  uint64_t payload_offset;
+  uint64_t payload_vaddr;
+  uint64_t payload_size;
+  size_t new_phnum;
+} t_cave_info;
+
 // Declaraciones para acceso al payload64.asm
 extern const unsigned char payload64_start[];
 extern const unsigned char payload64_end[];
@@ -34,5 +45,6 @@ int validate_elf(const unsigned char *file, size_t file_size,
                  t_elf_info *t_elf_info);
 int validate_text_segment(const unsigned char *file, size_t file_size,
                           t_elf_info *elf_info);
-int generate_cave(size_t origin_len, t_elf_info *elf_info);
+int generate_cave64(size_t origin_len, t_elf_info *elf_info,
+                    t_cave_info *cave_info);
 #endif
