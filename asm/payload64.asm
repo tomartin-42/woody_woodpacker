@@ -35,6 +35,7 @@ payload64_key:
     times 64 db 0
     
 payload64_code:
+
     ; Preservo todos los registros
     push rax
     push rbx
@@ -51,16 +52,54 @@ payload64_code:
     push r13
     push r14
     push r15
-       ; Print "...WOODY..."
+
+       ; Print "...WOODY..." 
     mov rax, 1                          ; syscall write
     mov rdi, 1                          ; std_out
     lea rsi, [rel payload64_woody_str]  ; "....WOODY....." string
     mov rdx, 15                         ; string len
+    syscal
+
+        ; calcular .text en runetime
+    lea r12, [rel payload64_start]      ; Dirección runtime donde empieza el payload
+    mov r13, [rel payload64_text_delta] ; Distancia desde el payload hasta .text suele ser negativo
+    add r13, r12                        ; Dirección runtime de .text
+    mov r14, [rel payload64_text_size]  ; Tamaño de .text
+        
+        ; Calcular número de paginas de la sección .text
+        ; Es necesario para usar mprotect()
+    mov r8, r13         ; Addr inicio de .text
+    and r8, 0x1000      ; Redondea hacia abajo la addr de .text
+    lea r9, [r13, r14]  ; Addr final de .text
+    add r9, 0x1000      ; Añado 0x1000 para saltar si o si a la siguiente página
+    and r9, 0x1000      ; Redondea hacia arriba la addr final de .text    
+    sub r9, r8          ; r9 = bytes que debe usar mprotect()
+
+        ; Necesitamos cambiar permisos de .text para poder descifrar
+        ; Syscall mprotect() 
+        ; rdi = addr página de inicio .text
+        ; rsi = bytes a cambiar
+        ; rdi = Flags
+    mov rax, 10        ; mprotect() syscall
+    mov rdi, r8        ; Pagína de inicio de .text
+    mov rsi, r9        ; Bytes que deben cambiar sus flags
+    mov rdx, 3         ; PROT_READ | PROT_WRITE
     syscall
-    ; Código del payload
-    ; Código del payload
-    ; Código del payload
-    ; Restauro todos los registros
+
+    ;; Rutina de descifrado
+
+        ; Ahora restauramos permisos de .text despues del descifrado
+        ; Syscall mprotect() 
+        ; rdi = addr página de inicio .text
+        ; rsi = bytes a cambiar
+        ; rdi = Flags
+    mov rax, 10     ; mprotect() syscall
+    mov rdi, r8     ; Pagína de inicio de .text
+    mov rsi, r9     ; Bytes que deben cabiar sus flags
+    mov rdx, 5      ; PROT_READ | PROT_EXEC
+
+        ; Restauro registros para delegar la ejecución al entry original
+        ; y no se vea afectado
     pop r15
     pop r14
     pop r13
