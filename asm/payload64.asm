@@ -29,11 +29,11 @@ payload64_key_size:
     dq 0
 
 payload64_woody_str:
-  db "....WOODY.....", 10
+    db "....WOODY.....", 10
 
 payload64_key:
     times 64 db 0
-
+    
 payload64_code:
     ; Preservo todos los registros
     push rax

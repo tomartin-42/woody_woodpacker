@@ -127,28 +127,62 @@ static Elf64_Phdr *generate_new_phdr(t_elf_info *elf_info,
 }
 
 static unsigned char *generate_payload(t_elf_info *elf_info,
-                                       t_cave_info *cave_info) {
-  unsigned char *payload = NULL;
+                                       t_cave_info *cave_info,
+                                       const unsigned char *key,
+                                       size_t key_size) {
+  unsigned char *payload;
+  int64_t delta;
+  uint64_t patched_size;
+  size_t offset;
+  size_t payload_size;
 
-  payload = malloc(cave_info->payload_size);
-  if (payload == NULL) {
+  if (elf_info == NULL || cave_info == NULL || key == NULL || key_size == 0 ||
+      key_size > 64 || cave_info->payload_size > SIZE_MAX)
     return (NULL);
-  }
 
-  ft_memcpy(payload, payload64_start, cave_info->payload_size);
+  payload_size = (size_t)cave_info->payload_size;
+  payload = malloc(payload_size);
+  if (payload == NULL)
+    return (NULL);
 
-  int64_t text_delta =
-      (int64_t)elf_info->text_vaddr - (int64_t)cave_info->payload_vaddr;
+  // Crea una copia modificable; la plantilla enlazada permanece intacta.
+  ft_memcpy(payload, payload64_start, payload_size);
 
-  size_t offset =
+  // Cada offset se obtiene restando al símbolo parcheable el inicio del blob.
+  // Así los cambios en el assembly no obligan a mantener offsets manuales.
+  offset =
       (size_t)((uintptr_t)payload64_text_delta - (uintptr_t)payload64_start);
 
-  ft_memcpy(payload + offset, &text_delta, sizeof(text_delta));
+  // Parchea la distancia relativa desde el payload hasta la sección .text.
+  delta = (int64_t)elf_info->text_vaddr - (int64_t)cave_info->payload_vaddr;
+  ft_memcpy(payload + offset, &delta, sizeof(delta));
+
+  // Parchea la distancia relativa hasta el entry point original.
+  offset =
+      (size_t)((uintptr_t)payload64_entry_delta - (uintptr_t)payload64_start);
+  delta = (int64_t)elf_info->old_entry - (int64_t)cave_info->payload_vaddr;
+  ft_memcpy(payload + offset, &delta, sizeof(delta));
+
+  // Parchea el tamaño de .text usando el qword reservado en el payload.
+  offset =
+      (size_t)((uintptr_t)payload64_text_size - (uintptr_t)payload64_start);
+  patched_size = elf_info->text_size;
+  ft_memcpy(payload + offset, &patched_size, sizeof(patched_size));
+
+  // Parchea el número de bytes de clave que usará el bucle XOR.
+  offset = (size_t)((uintptr_t)payload64_key_size - (uintptr_t)payload64_start);
+  patched_size = key_size;
+  ft_memcpy(payload + offset, &patched_size, sizeof(patched_size));
+
+  // Sustituye los bytes reservados para la clave dentro de la copia.
+  offset = (size_t)((uintptr_t)payload64_key - (uintptr_t)payload64_start);
+  ft_memcpy(payload + offset, key, key_size);
   return (payload);
 }
 
 int generate_cave64(size_t origin_len, t_elf_info *elf_info,
-                    t_cave_info *cave_info) {
+                    t_cave_info *cave_info, const unsigned char *key,
+                    size_t key_size) {
   if (!load_data(origin_len, elf_info, cave_info)) {
     return (0);
   }
@@ -158,8 +192,10 @@ int generate_cave64(size_t origin_len, t_elf_info *elf_info,
     return (0);
   }
 
-  cave_info->payload = generate_payload(elf_info, cave_info);
+  cave_info->payload = generate_payload(elf_info, cave_info, key, key_size);
   if (!cave_info->payload) {
+    free(cave_info->new_phdrs);
+    cave_info->new_phdrs = NULL;
     return (0);
   }
 

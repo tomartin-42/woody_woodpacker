@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   unsigned char *origin_file = NULL;
   off_t origin_len;
   int fd;
-  u_int8_t key_size = 32;
+  size_t key_size = 32;
   unsigned char key[64];
   struct s_elf_info elf_info = {0};
   struct s_cave_info cave_info = {0};
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
   }
 
   if (elf_info.elf_class == WOODY_ELF64) {
-    if (!generate_cave64(origin_len, &elf_info, &cave_info)) {
+    if (!generate_cave64(origin_len, &elf_info, &cave_info, key, key_size)) {
       write(2, "Error: Can not generate cave\n", 29);
       munmap(origin_file, origin_len);
       exit(EXIT_FAILURE);

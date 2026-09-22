@@ -48,5 +48,6 @@ int validate_elf(const unsigned char *file, size_t file_size,
 int validate_text_segment(const unsigned char *file, size_t file_size,
                           t_elf_info *elf_info);
 int generate_cave64(size_t origin_len, t_elf_info *elf_info,
-                    t_cave_info *cave_info);
+                    t_cave_info *cave_info, const unsigned char *key,
+                    size_t key_size);
 #endif
