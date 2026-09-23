@@ -14,7 +14,7 @@ global payload32_key
 payload32_start:
     jmp payload32_code
 
-payload32_text_delta:char
+payload32_text_delta:
     dd 0
 
 payload32_entry_delta:

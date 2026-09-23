@@ -136,7 +136,12 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
   } else {
-    // 32bits
+    if (!generate_cave32(origin_file, origin_len, &elf_info, &cave_info, key,
+                         key_size)) {
+      write(2, "Error: Can not generate cave\n", 29);
+      munmap(origin_file, origin_len);
+      exit(EXIT_FAILURE);
+    }
   }
 
   if (!write_woody(origin_file, origin_len, &cave_info)) {

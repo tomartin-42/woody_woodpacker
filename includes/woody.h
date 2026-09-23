@@ -64,6 +64,9 @@ int validate_text_segment(const unsigned char *file, size_t file_size,
 int generate_cave64(unsigned char *origin_file, size_t origin_len,
                     t_elf_info *elf_info, t_cave_info *cave_info,
                     const unsigned char *key, size_t key_size);
+int generate_cave32(unsigned char *origin_file, size_t origin_len,
+                    t_elf_info *elf_info, t_cave_info *cave_info,
+                    const unsigned char *key, size_t key_size);
 int write_woody(unsigned char *origin_file, size_t origin_len,
                 t_cave_info *cave_info);
 #endif
