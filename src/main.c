@@ -129,7 +129,8 @@ int main(int argc, char **argv) {
   }
 
   if (elf_info.elf_class == WOODY_ELF64) {
-    if (!generate_cave64(origin_len, &elf_info, &cave_info, key, key_size)) {
+    if (!generate_cave64(origin_file, origin_len, &elf_info, &cave_info, key,
+                         key_size)) {
       write(2, "Error: Can not generate cave\n", 29);
       munmap(origin_file, origin_len);
       exit(EXIT_FAILURE);
@@ -137,6 +138,13 @@ int main(int argc, char **argv) {
   } else {
     // 32bits
   }
-  printf("POINTER %p %s\n", payload64_woody_str, payload64_woody_str);
+
+  if (!write_woody(origin_file, origin_len, &cave_info)) {
+    write(2, "Error: Can write woody\n", 23);
+    free(cave_info.payload);
+    free(cave_info.new_phdrs);
+    munmap(origin_file, origin_len);
+    exit(EXIT_FAILURE);
+  }
   exit(EXIT_SUCCESS);
 }

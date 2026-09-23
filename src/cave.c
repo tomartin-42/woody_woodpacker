@@ -180,9 +180,12 @@ static unsigned char *generate_payload(t_elf_info *elf_info,
   return (payload);
 }
 
-int generate_cave64(size_t origin_len, t_elf_info *elf_info,
-                    t_cave_info *cave_info, const unsigned char *key,
-                    size_t key_size) {
+int generate_cave64(unsigned char *origin_file, size_t origin_len,
+                    t_elf_info *elf_info, t_cave_info *cave_info,
+                    const unsigned char *key, size_t key_size) {
+
+  Elf64_Ehdr *ehdr = elf_info->ehdr;
+
   if (!load_data(origin_len, elf_info, cave_info)) {
     return (0);
   }
@@ -199,5 +202,13 @@ int generate_cave64(size_t origin_len, t_elf_info *elf_info,
     return (0);
   }
 
+  // Patch ehdr original
+  ehdr->e_phoff = cave_info->phdr_offset;
+  ehdr->e_phnum = cave_info->new_phnum;
+  ehdr->e_entry = cave_info->payload_vaddr;
+
+  // Encriptación
+  asm_encrypt(origin_file + elf_info->text_offset, elf_info->text_size, key,
+              key_size);
   return (1);
 }

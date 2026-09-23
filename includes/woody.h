@@ -43,11 +43,17 @@ extern const unsigned char payload64_key_size[];
 extern const unsigned char payload64_woody_str[];
 extern const unsigned char payload64_key[];
 
+// Función optimizada asm encriptación
+void asm_encrypt(unsigned char *text, size_t text_size,
+                 const unsigned char *key, size_t key_size);
+
 int validate_elf(const unsigned char *file, size_t file_size,
                  t_elf_info *t_elf_info);
 int validate_text_segment(const unsigned char *file, size_t file_size,
                           t_elf_info *elf_info);
-int generate_cave64(size_t origin_len, t_elf_info *elf_info,
-                    t_cave_info *cave_info, const unsigned char *key,
-                    size_t key_size);
+int generate_cave64(unsigned char *origin_file, size_t origin_len,
+                    t_elf_info *elf_info, t_cave_info *cave_info,
+                    const unsigned char *key, size_t key_size);
+int write_woody(unsigned char *origin_file, size_t origin_len,
+                t_cave_info *cave_info);
 #endif

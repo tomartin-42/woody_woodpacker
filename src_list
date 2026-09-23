@@ -1,1 +1,1 @@
-SRC_FILES = main.c validator.c cave.c
+SRC_FILES = main.c validator.c cave.c write.c
