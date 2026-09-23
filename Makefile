@@ -20,6 +20,8 @@ ASM_OBJ = $(addprefix $(OBJ_DIR), $(ASM_FILES:.asm=.o))
 PAYLOAD_DIR = ./asm/
 PAYLOAD64_SRC = $(PAYLOAD_DIR)payload64.asm
 PAYLOAD64_OBJ = $(OBJ_DIR)payload64.o
+PAYLOAD32_SRC = $(PAYLOAD_DIR)payload32.asm
+PAYLOAD32_OBJ = $(OBJ_DIR)payload32.o
 
 include ./src_list
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
@@ -65,8 +67,11 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.asm
 $(PAYLOAD64_OBJ): $(PAYLOAD64_SRC)
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
-$(NAME): $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ)
-	$(CC) $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ) $(CFLAGS) $(LNK) -o $@ 
+$(PAYLOAD32_OBJ): $(PAYLOAD32_SRC)
+	$(ASM) $(ASMFLAGS) -o $@ $<
+
+$(NAME): $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ) $(PAYLOAD32_OBJ)
+	$(CC) $(OBJ) $(ASM_OBJ) $(PAYLOAD64_OBJ) $(PAYLOAD32_OBJ) $(CFLAGS) $(LNK) -o $@ 
 
 bonus: all
 

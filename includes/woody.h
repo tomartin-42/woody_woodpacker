@@ -43,6 +43,16 @@ extern const unsigned char payload64_key_size[];
 extern const unsigned char payload64_woody_str[];
 extern const unsigned char payload64_key[];
 
+// Declaraciones para acceso al payload32.asm
+extern const unsigned char payload32_start[];
+extern const unsigned char payload32_end[];
+extern const unsigned char payload32_text_delta[];
+extern const unsigned char payload32_entry_delta[];
+extern const unsigned char payload32_text_size[];
+extern const unsigned char payload32_key_size[];
+extern const unsigned char payload32_woody_str[];
+extern const unsigned char payload32_key[];
+
 // Función optimizada asm encriptación
 void asm_encrypt(unsigned char *text, size_t text_size,
                  const unsigned char *key, size_t key_size);
