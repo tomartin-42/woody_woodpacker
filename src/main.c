@@ -146,5 +146,11 @@ int main(int argc, char **argv) {
     munmap(origin_file, origin_len);
     exit(EXIT_FAILURE);
   }
+
+  printf("key_value: ");
+  for (size_t i = 0; i < key_size; i++)
+    printf("%02X", (unsigned int)key[i]);
+  printf("\n");
+
   exit(EXIT_SUCCESS);
 }

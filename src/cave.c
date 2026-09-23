@@ -210,5 +210,6 @@ int generate_cave64(unsigned char *origin_file, size_t origin_len,
   // Encriptación
   asm_encrypt(origin_file + elf_info->text_offset, elf_info->text_size, key,
               key_size);
+
   return (1);
 }
