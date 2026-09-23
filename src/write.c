@@ -36,19 +36,19 @@ int write_woody(unsigned char *origin_file, size_t origin_len,
   // Escribe primero el ELF original, ya cifrado y con su cabecera parcheada.
   // El seek deja el padding necesario hasta la nueva tabla PHDR.
   if (!write_all(fd, origin_file, origin_len) ||
-      lseek(fd, (off_t)cave_info->phdr_offset, SEEK_SET) == -1) {
+      lseek(fd, cave_info->phdr_offset, SEEK_SET) == -1) {
     close(fd);
     return (0);
   }
 
   // Añade la tabla PHDR ampliada y avanza hasta el comienzo del payload.
   if (!write_all(fd, cave_info->new_phdrs, cave_info->phdr_size) ||
-      lseek(fd, (off_t)cave_info->payload_offset, SEEK_SET) == -1) {
+      lseek(fd, cave_info->payload_offset, SEEK_SET) == -1) {
     close(fd);
     return (0);
   }
 
-  // Escribe el payload que descifrará .text antes de saltar al entry original.
+  // Escribe el payload.
   if (!write_all(fd, cave_info->payload, cave_info->payload_size)) {
     close(fd);
     return (0);
