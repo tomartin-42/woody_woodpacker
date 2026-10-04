@@ -29,7 +29,7 @@ payload64_key_size:
     dq 0
 
 payload64_woody_str:
-    db "....WOODY.....", 10
+    db "....WOODY....", 10
 
 payload64_key:
     times 64 db 0
@@ -57,7 +57,7 @@ payload64_code:
     mov rax, 1                          ; syscall write
     mov rdi, 1                          ; std_out
     lea rsi, [rel payload64_woody_str]  ; "....WOODY....." string
-    mov rdx, 15                         ; string len
+    mov rdx, 14                         ; string len
     syscall
 
         ; calcular .text en runetime

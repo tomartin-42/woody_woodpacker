@@ -22,6 +22,7 @@ PAYLOAD64_SRC = $(PAYLOAD_DIR)payload64.asm
 PAYLOAD64_OBJ = $(OBJ_DIR)payload64.o
 PAYLOAD32_SRC = $(PAYLOAD_DIR)payload32.asm
 PAYLOAD32_OBJ = $(OBJ_DIR)payload32.o
+PAYLOAD_BIN = $(PAYLOAD_DIR)payload64 $(PAYLOAD_DIR)payload32
 
 include ./src_list
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
@@ -82,6 +83,7 @@ print:
 
 clean:
 	@rm -Rf $(OBJ_DIR)
+	@rm -f $(PAYLOAD_BIN)
 	@make -C $(LIBFT_DIR) clean
 
 fclean: clean

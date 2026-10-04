@@ -27,7 +27,7 @@ payload32_key_size:
     dd 0
 
 payload32_woody_str:
-    db "....WOODY.....", 10
+    db "....WOODY....", 10
 
 payload32_key:
     times 64 db 0
@@ -53,7 +53,7 @@ payload32_get_base:
     mov eax, 4
     mov ebx, 1
     lea ecx, [ebp + payload32_woody_str - payload32_start]
-    mov edx, 15
+    mov edx, 14
     int 0x80
 
     ; Reconstruye la dirección runtime y el tamaño de .text.

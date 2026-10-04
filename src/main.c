@@ -157,5 +157,9 @@ int main(int argc, char **argv) {
     printf("%02X", (unsigned int)key[i]);
   printf("\n");
 
+  free(cave_info.payload);
+  free(cave_info.new_phdrs);
+  munmap(origin_file, origin_len);
+
   exit(EXIT_SUCCESS);
 }
