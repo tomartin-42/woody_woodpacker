@@ -6,6 +6,10 @@ ASMFLAGS = -f elf64
 CFLAGS = -Wall -Werror -Wextra
 FSANITIZER = -g -fsanitize=address
 
+DOCKER_IMAGE = woody-woodpacker-dev
+DOCKER_CONTAINER = woody-woodpacker-dev
+DOCKER_PLATFORM = linux/amd64
+
 LIBFT_DIR = ./libft42/
 LNK = -L $(LIBFT_DIR) -lft
 SRC_DIR = ./src/
@@ -92,3 +96,23 @@ fclean: clean
 	@rm -Rf woody
 
 re: fclean all
+
+docker:
+	docker build --platform $(DOCKER_PLATFORM) \
+		--build-arg USER_ID=$$(id -u) \
+		--build-arg GROUP_ID=$$(id -g) \
+		-t $(DOCKER_IMAGE) .
+	@docker rm -f $(DOCKER_CONTAINER) >/dev/null 2>&1 || true
+	docker run -d --init --platform $(DOCKER_PLATFORM) \
+		--name $(DOCKER_CONTAINER) \
+		-v "$(CURDIR):/workspace" \
+		-w /workspace \
+		$(DOCKER_IMAGE)
+
+attach:
+	docker exec -u root -it $(DOCKER_CONTAINER) bash
+
+docker-stop:
+	@docker rm -f $(DOCKER_CONTAINER) >/dev/null 2>&1 || true
+
+.PHONY: all bonus print clean fclean re obj docker attach docker-stop
